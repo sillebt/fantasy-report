@@ -218,7 +218,7 @@ all_time_standings <- full_schedule |>
              subtitle = md("**All-Time Standings**")) |>
   gt_theme_espn() |>
   cols_align("left", columns = tm) |>
-  tab_options(data_row.padding = px(3)) |>
+  tab_options(data_row.padding = px(5)) |>
   tab_source_note(md("**Season: 2020-2022 | PF/PA Represent Avg/Gm**"))
 
 gtsave(all_time_standings, 'output/history/all_time_standings.png')
@@ -239,11 +239,11 @@ standings22 <- full_schedule |>
   arrange(-winp) |>
   select(tm, wins, losses, win_per, pf, pa) |>
   gt() |>
-  tab_header(title = md("**Dynasty Insanity**"),
-             subtitle = md("**2022 Season Standings**")) |>
+  tab_header(title = md("**2022 Season Standings**"),
+             subtitle = md("**Tommy's Tainted Trophy**")) |>
   gt_theme_espn() |>
   cols_align("left", columns = tm) |>
-  tab_options(data_row.padding = px(3)) |>
+  tab_options(data_row.padding = px(5)) |>
   tab_source_note(md("**Season: 2022 | PF/PA Represent Avg/Gm**"))
 
 gtsave(standings22, 'output/history/2022_standings.png')
@@ -264,11 +264,11 @@ standings21 <- full_schedule |>
   arrange(-winp) |>
   select(tm, wins, losses, win_per, pf, pa) |>
   gt() |>
-  tab_header(title = md("**Dynasty Insanity**"),
-             subtitle = md("**2021 Season Standings**")) |>
+  tab_header(title = md("**2021 Final Standings**"),
+             subtitle = md("**Iron Banki Claims His Throne**")) |>
   gt_theme_espn() |>
   cols_align("left", columns = tm) |>
-  tab_options(data_row.padding = px(3)) |>
+  tab_options(data_row.padding = px(5)) |>
   tab_source_note(md("**Season: 2021 | PF/PA Represent Avg/Gm**"))
 
 gtsave(standings21, 'output/history/2021_standings.png')
@@ -289,11 +289,11 @@ standings20 <- full_schedule |>
   arrange(-winp) |>
   select(tm, wins, losses, win_per, pf, pa) |>
   gt() |>
-  tab_header(title = md("**Dynasty Insanity**"),
-             subtitle = md("**2020 Season Standings**")) |>
+  tab_header(title = md("**2020 Final Standings**"),
+             subtitle = md("**Nicks Chubb's Golden Taint**")) |>
   gt_theme_espn() |>
   cols_align("left", columns = tm) |>
-  tab_options(data_row.padding = px(3)) |>
+  tab_options(data_row.padding = px(5)) |>
   tab_source_note(md("**Season: 2020 | PF/PA Represent Avg/Gm**"))
 
 gtsave(standings20, 'output/history/2020_standings.png')

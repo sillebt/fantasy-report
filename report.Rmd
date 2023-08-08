@@ -4,14 +4,14 @@ author: "Tom"
 output:
   pdf_document:
     toc: TRUE
-    toc_depth: 3
+    toc_depth: 4
     fig_width: 4
     fig_height: 6
     fig_caption: true
   html_document:
     df_print: paged
     toc: TRUE
-    toc_depth: 3
+    toc_depth: 4
   header-includes:
   - \usepackage{subcaption}
   papersize: a4
@@ -43,11 +43,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Dynasty Insanity Preseason Almanac (Forward by Andy Reid)
+# Dynasty Insanity Preseason Almanac 
 
-![The Chef](img/andy.png){width=50%}
+![Forward by Andy 'The Chef' Reid](img/andy.png){width=50%}
 
-This is America, gentlemen. You play to win. If it is ping-pong or a hot dog eating contest, you play to win. That is how you go about this business we call Dynasty Fantasy Football. It is all about getting that sweet, sweet taste of victory.
+This is America, gentlemen, you play to win. If it is ping-pong or a hot dog eating contest, you play to win. That is how you go about this business we call Dynasty Fantasy Football. It is all about getting that sweet, sweet taste of victory.
 
 Maybe you won last year. Maybe you didn't deserve to, either. Doesn't matter to me. **If you like chocolate cake and you eat a piece, and then you have one dangling in front of your face, you're going to want to eat that too.** And hungry dogs run faster. 
 
@@ -57,50 +57,85 @@ To put all that together and make it perfect, there’s some time involved. That
 
 There's a lot of ways to win in this league. Sometimes you want to keep the roster young. And at the same time you need those veterans who are older. It’s a delicate blend, kind of like sweet and sour pork. 
 
-So go attack this thing, boys. Attack it like I went after a few chile rellenos last night. Because if you have that trophy, that's a special feeling. It means it all paid off and it'll matter to you forever. When you sit back and look at that hunk of metal, it'll bring a smile to your face. **It's like a Snickers bar in the freezer, right? I mean, it's treasured.**
+So go attack this thing, boys. Attack it like I did a few Chile Rellenos last night. Because if you have that trophy, it's a special feeling, man. It means it all paid off and it'll mean something to you forever. When you sit back and look at that dick-shaped hunk of metal, it'll bring a smile to your face. **It's like a Snickers in the freezer, right? It's treasured.**
 
-![What It's All About](img/confetti.png)
+![The Goal](img/confetti.png)
 \newpage
 
-## Dynasty Insanity Historical Standings
+## The Results
 
-**All-Time Dynasty Standings & 2022 (Tommy's Tainted Trophy)**
-```{r, echo=FALSE,out.width="49%",out.height="49%",fig.show='hold',fig.align='center', fig.cap="Dynasty Insanity Standings - All-Time + 2022 Seasons"}
-
+**All-Time Dynasty Standings & 2022**
+```{r, echo=FALSE,out.width="49%",out.height="49%",fig.show='hold',fig.align='center', fig.cap="Standings"}
 knitr::include_graphics(c("output/history/all_time_standings.png","output/history/2022_standings.png"))
 ```
 \newpage
-**2021 - Naad Claims His Thrown & 2020 - Hosta's Inagural Golden Taint**
+**2021 & 2020**
 ```{r, echo=FALSE,out.width="49%",out.height="49%",fig.show='hold',fig.align='center', fig.cap="Dynasty Insanity Standings - 2020-21 Seasons"}
 
 knitr::include_graphics(c("output/history/2021_standings.png","output/history/2020_standings.png"))
 ```
+\newpage
 
-## The Final Rosters
+## The Franchises
 
 It's almost Week 1 and these are the final rosters each Franchise has selected, by choice or not, to take the field. 
 
-Anyone of you can build plausible-sounding, 'fact-based' narratives that attempt to explain why your roster is taking home the trophy. Only time will tell and, hopefully, 2023 doesn't end with another tainted, asterisk-bound title & require a near death on live TV for Tommy Tsao to claim a championship. This may be the only thing we're all in agreement on.
+Anyone of you can build plausible-sounding, 'fact-based' narratives that attempt to explain why your roster is taking home the trophy. Only time will tell. 
 
-To preview, the following information is aggregated for each team: 
+Hopefully, 2023 doesn't require a tragic, near-death on live TV to determine its outcome. In a perfect world, it won't end with a tainted, asterisk-bound title. I think that's one thing we can all agree on. If there's one thing we don't all agree on, it's saying, "Congrats, Tommy Tsao!"
 
-1. 2023 Pre-Draft Roster
+With that - on to 2023 and previewing each franchise's 2023 roster, strengths, weaknesses, historical results and rivals. A Dynasty version of Why Your Team Sucks but, unlike Deadspin's review of the NFL, most of your guy's rosters are genuine, Oakland-level dogshit. 
 
-2. 2022 Final Roster (Ranked by Fantasy Points Scored)
+_To preview each team, the following information is aggregated:_
+1. 2023 Pre-Draft Roster (Including Various Rankings)
 
-3. 2022 Final Schedule Results 
+2. 2022 Final Roster (Ranked by Fantasy Points Scored in Line-Up)
 
-4. Career Head to Head Records vs Each Opponent (2022-23)
+3. 2022 Final Schedule Win/Loss 
 
-Notes on Methodology:
-- Ranking, Tier, and ECR Sourced via **FantasyPros**. 
-- Position Rank and Career Value sourced from **DynastyProcess.com**
-- Lifetime Value sourced from **PlayerProfiler** 
-- Bench limited to **Top 10 FantasyPros Ranked** Players 
+4. Career Head to Head Records vs League Opponents (All-Time)
+
+
+_Notes on Methodology:_
+1. Ranking, Tier, and ECR Sourced via **FantasyPros**
+
+2. Position Rank and Career Value Sourced via **DynastyProcess.com**
+
+3. Lifetime Value Sourced via **PlayerProfiler** 
+
+4. Bench Players Limited to **Top 10 by FantasyPros Ranking** 
+
 
 \newpage
 ### Team Alanasty
-2023 Roster & 2022 Top Roster Players
-```{r, echo=FALSE,out.width="65%",out.height="65%",fig.show='hold',fig.align='top', fig.cap="Alanasty - 2022 and 2023 Rosters"}
+2023 Roster & Career Head to Head
+```{r, echo=FALSE,out.width="60%",out.height="49%",fig.show='hold',fig.align='top', fig.cap="Alanasty - 2023 and Career Head2Head"}
 knitr::include_graphics(c("output/2023/dynasty_roster_Alanasty.png","output/2022/dynasty_rosterAlanasty.png"))
+```
+\newpage
+2022 Roster & Schedule
+```{r, echo=FALSE,out.width="60%",out.height="49%",fig.show='hold',fig.align='top', fig.cap="Alanasty - 2022 and 2023 Rosters"}
+knitr::include_graphics(c("output/headtohead/JP_head_to_head.png","output/py_schedule/season_results_JP.png"))
+```
+
+\newpage
+### Montel's A$$Men
+2023 Roster & Career Head to Head
+```{r, echo=FALSE,out.width="60%",out.height="49%",fig.show='hold',fig.align='top', fig.cap="Montel - 2023 and Career Head2Head"}
+knitr::include_graphics(c("output/2023/dynasty_roster_Asmontalvo.png","output/2022/dynasty_rosterAsmontalvo.png"))
+```
+2022 Roster & Schedule
+```{r, echo=FALSE,out.width="60%",out.height="49%",fig.show='hold',fig.align='top', fig.cap="Montel - 2022 and Schedule"}
+knitr::include_graphics(c("output/headtohead/Montel_head_to_head.png","output/py_schedule/season_results_Montel.png"))
+```
+
+\newpage
+### Hosta's Golden Taint
+2023 Roster & Career Head to Head
+```{r, echo=FALSE,out.width="60%",out.height="49%",fig.show='hold',fig.align='top', fig.cap="Hosta - 2023 and Career Head2Head"}
+knitr::include_graphics(c("output/2023/dynasty_roster_Nhosta.png","output/2022/dynasty_rosterNhosta.png"))
+```
+2022 Roster & Schedule
+```{r, echo=FALSE,out.width="60%",out.height="49%",fig.show='hold',fig.align='top', fig.cap="Hosta - 2022 and Schedule"}
+knitr::include_graphics(c("output/headtohead/Hosta_head_to_head.png","output/py_schedule/season_results_Hosta.png"))
 ```
