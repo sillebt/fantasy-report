@@ -207,7 +207,7 @@ all_time_standings <- full_schedule |>
     pa = round(mean(opp_score),0)) |>
   mutate(
     losses = games - wins,
-    win_per = percent(wins / games),
+    win_per = percent(wins / games, accuracy = 0.1),
     winp = wins / games) |>
   mutate(tm = ifelse(tm %in% c("Naad", "Hosta"), paste0(tm, " 🏆"), tm)) |>
   mutate(tm = ifelse(tm == "Tommy", paste0(tm, " 🏆 ** "), tm)) |>
@@ -233,7 +233,7 @@ standings22 <- full_schedule |>
     pa = round(mean(opp_score),0)) |>
   mutate(
     losses = games - wins,
-    win_per = percent(wins / games),
+    win_per = percent(wins / games, accuracy = 0.1),
     winp = wins / games) |>
   mutate(tm = ifelse(tm == "Tommy", paste0(tm, " 🏆 ** "), tm)) |>
   arrange(-winp) |>
@@ -258,7 +258,7 @@ standings21 <- full_schedule |>
     pa = round(mean(opp_score),0)) |>
   mutate(
     losses = games - wins,
-    win_per = percent(wins / games),
+    win_per = percent(wins / games, accuracy = 0.1),
     winp = wins / games) |>
   mutate(tm = ifelse(tm == "Naad", paste0(tm, " 🏆"), tm)) |>
   arrange(-winp) |>
@@ -283,7 +283,7 @@ standings20 <- full_schedule |>
     pa = round(mean(opp_score),0)) |>
   mutate(
     losses = games - wins,
-    win_per = percent(wins / games),
+    win_per = percent(wins / games, accuracy = 0.1),
     winp = wins / games) |>
   mutate(tm = ifelse(tm == "Hosta", paste0(tm, " 🏆"), tm)) |>
   arrange(-winp) |>
@@ -373,32 +373,30 @@ team_dynasty_rosters <- team_dynasty |>
 # TEAM ROSTER IMAGES --------------------
 
 df <- team_dynasty_rosters |>
-  select(headshot, user_name, name, team, pos, age, fp_tier, fp_rank, fp_ecr, fp_posrank, playerprofiler = career_value, dynastypros = dynpros_value) |>
+  select(headshot, user_name, name, team, pos, fp_tier, fp_rank, fp_ecr, playerprofiler = career_value, dynastypros = dynpros_value) |>
   mutate(user_name = stri_trans_totitle(gsub(",", " ", user_name)))
 
 gt_theme_pff <- function(data, ...) {
   data %>%
     # add spanner for PFF Grade
     tab_spanner(
-      label = "Fantasy Pros Rankings",
-      columns = vars(fp_tier, fp_rank, fp_ecr, fp_posrank)
+      label = "Season Rank",
+      columns = contains(c("fp_tier", "fp_rank"))
     ) %>%
     # add spanner for SNAPS
     tab_spanner(
-      label = "Dynasty Value",
+      label = "Dynasty Rank",
       columns = contains(c("playerprofiler", "dynastypros"))
     ) %>%
     # Add a "blank" spanner to add white space
     tab_spanner(
       label = "BLANK",
-      columns = 1:6
+      columns = 1:5
     ) %>%
     # Relabel columns
     cols_label(
       fp_tier = "Tier",
       fp_rank = "Rank",
-      fp_ecr = "ECR",
-      fp_posrank = "PosRk",
       playerprofiler = "PlyrPro",
       dynastypros = "DynPro"
     ) %>%
@@ -412,11 +410,11 @@ gt_theme_pff <- function(data, ...) {
       style = list(
         cell_fill(color = "#EF6F6C"),
         cell_text(color = "white"),
-        cell_borders(sides = "left", color = "white", weight = px(3))
+        cell_borders(sides = "all", color = "#EF6F6C", weight = px(1))
       ),
       locations = list(
         cells_column_spanners(
-          spanners = c("Fantasy Pros Rankings", "Dynasty Value")
+          spanners = c("Season Rank", "Dynasty Rank")
         )
       )
     ) %>%
@@ -438,23 +436,13 @@ gt_theme_pff <- function(data, ...) {
         cell_text(color = "#585d73", weight = "bold")
       ),
       locations = cells_body(
-        columns = 6:12
-      )
-    ) %>%
-    # Change font color and weight for numeric col
-    tab_style(
-      style = list(
-        cell_text(color = "#585d73", weight = "bolder")
-      ),
-      locations = cells_body(
-        columns = 1:6
+        columns = 1:9
       )
     ) %>%
     # Make column labels and spanners all caps
     opt_all_caps() %>%
     # add row striping
     opt_row_striping() %>%
-    gt_add_divider(columns = pos, sides = "right", color = "#585d73", style = "solid") %>%
     # change overall table styling for borders and striping
     tab_options(
       column_labels.background.color = "#000F66",
@@ -462,7 +450,7 @@ gt_theme_pff <- function(data, ...) {
       table.border.top.width = px(3),
       table.border.top.color = "transparent",
       table.border.bottom.color = "transparent",
-      table.border.bottom.width = px(4),
+      table.border.bottom.width = px(3),
       column_labels.border.top.width = px(3),
       column_labels.border.top.color = "transparent",
       column_labels.border.bottom.width = px(3),
@@ -471,16 +459,6 @@ gt_theme_pff <- function(data, ...) {
       data_row.padding = px(10),
       ...
     ) %>% 
-    # change color of border separating the text from the sourcenote
-    tab_style(
-      style = cell_borders(
-        sides = "bottom", color = "#585d73", weight = px(3)
-      ),
-      locations = cells_body(
-        columns = TRUE,
-        rows = nrow(data$`_data`)
-      )
-    ) %>%
     # change font to Lato throughout (note no need to have Lato locally!)
     opt_table_font(
       font = c(
@@ -537,13 +515,13 @@ create_user_table <- function(user_name1) {
   gt_table <- lineup %>%
     filter(user_name == user_name1) %>%
     group_by(roster) %>%
-    select(headshot, name, team, age, pos, fp_tier, fp_rank, fp_posrank, fp_ecr, playerprofiler, dynastypros) %>%
+    select(headshot, name, team, pos, fp_tier, fp_rank, playerprofiler, dynastypros) %>%
     gt() %>%
     tab_header(title = md("**2023 Dynasty Roster**"),
                subtitle = paste(user_name)) %>%
     gt_img_rows(headshot) %>% 
     fmt_number(
-      columns = 6:12,
+      columns = 5:9,
       decimals = 0
     ) %>% 
     gt_theme_pff()
@@ -604,13 +582,13 @@ gt_theme_538 <- function(data,...) {
     ) %>%
     tab_spanner(
       label = "Player Scoring",
-      columns = vars(total_pts, avg_pts, rank)
+      columns = c(rank, total_pts, avg_pts)
     ) %>% 
     tab_style(
       style = list(
         cell_fill(color = "#EF6F6C"),
         cell_text(color = "white"),
-        cell_borders(sides = "all", color = "#000F66", weight = px(1))
+        cell_borders(sides = "all", color = "#EF6F6C", weight = px(1))
       ),
       locations = list(
         cells_column_spanners(
@@ -624,16 +602,16 @@ gt_theme_538 <- function(data,...) {
       ),
       locations = list(
         cells_column_spanners(
-          spanners = c("BLANK")
+          spanners = "BLANK"
         )
       )
     ) %>%
     tab_style(
       style = cell_borders(
-        sides = "all", color = "transparent", weight = px(2)
+        sides = "all", color = "transparent", weight = px(1)
       ),
       locations = cells_body(
-        columns = TRUE,
+        columns = everything(),
         # This is a relatively sneaky way of changing the bottom border
         # Regardless of data size
         rows = nrow(data$`_data`)
@@ -644,32 +622,23 @@ gt_theme_538 <- function(data,...) {
         cell_text(color = "#585d73", weight = "bold")
       ),
       locations = cells_body(
-        columns = 5:7
-      )
-    ) %>%
-    # Change font color and weight for numeric col
-    tab_style(
-      style = list(
-        cell_text(color = "#585d73", weight = "bolder")
-      ),
-      locations = cells_body(
-        columns = 1:4
+        columns = 1:8
       )
     ) %>%
     opt_row_striping() %>%
     tab_options(
       column_labels.background.color = "#000F66",
+      table_body.hlines.color = "transparent",
       table.border.top.width = px(3),
       table.border.top.color = "transparent",
       table.border.bottom.color = "transparent",
-      table.border.bottom.width = px(4),
+      table.border.bottom.width = px(3),
       column_labels.border.top.width = px(3),
       column_labels.border.top.color = "transparent",
       column_labels.border.bottom.width = px(3),
       column_labels.border.bottom.color = "transparent",
       row.striping.background_color = "#FFFDE9",
       data_row.padding = px(10),
-      heading.align = "center",
       ...
     ) 
 }
@@ -679,7 +648,7 @@ historical_table <- function(user_name1) {
   # Filter data for the specific user_name
   user_data <- data %>%
     filter(user_name == user_name1) %>%
-    select(user_name, headshot, name, team, pos:rank) %>%
+    select(user_name, headshot, name, team, pos, rank, total_pts, avg_pts) %>%
     arrange(pos, -total_pts) # arrange players by Total Points
   
   # Define the number of players for each pos in the starting lineup
@@ -726,12 +695,12 @@ historical_table <- function(user_name1) {
       source_note = md("**Bench**: Top-10 Only")
     ) %>% 
     fmt_number(
-      columns = 6,
-      decimals = 2
+      columns = 6:7,
+      decimals = 0
     ) %>% 
     fmt_number(
-      columns = 7,
-      decimals = 0
+      columns = 8,
+      decimals = 1
     ) %>% 
     gt_theme_538()
   
@@ -771,140 +740,6 @@ df <- head2head |>
   select(tm, opp, wins, losses, winperc, pf, pa, avg_mrg) |>
   ungroup()
 
-gt_theme_h2h <- function(data,...) {
-  data %>%
-    opt_all_caps()  %>%
-    opt_table_font(
-      font = list(
-        google_font("Roboto"),
-        default_fonts()
-      )
-    ) %>%
-    tab_spanner(
-      label = "BLANK",
-      columns = 1
-    ) %>%
-    tab_spanner(
-      label = "Matchup Scoring",
-      columns = 5:7
-    ) %>%
-    tab_spanner(
-      label = "Wins / Losses",
-      columns = 2:4
-    ) %>% 
-    tab_style(
-      style = list(
-        cell_fill(color = "#EF6F6C"),
-        cell_text(color = "white"),
-        cell_borders(sides = "all", color = "transparent", weight = px(1))
-      ),
-      locations = list(
-        cells_column_spanners(
-          spanners = "Wins / Losses")
-      )
-    ) %>%
-    tab_style(
-      style = list(
-        cell_fill(color = "#7180AC"),
-        cell_text(color = "white"),
-        cell_borders(sides = "all", color = "transparent", weight = px(1))
-      ),
-      locations = list(
-        cells_column_spanners(
-          spanners = "Matchup Scoring")
-      )
-    ) %>%
-    tab_style(
-      style = list(
-        cell_fill(color = "transparent"),
-        cell_text(color = "transparent")
-      ),
-      locations = list(
-        cells_column_spanners(
-          spanners = c("BLANK")
-        )
-      )
-    ) %>%
-    tab_style(
-      style = cell_borders(
-        sides = "all", color = "transparent", weight = px(2)
-      ),
-      locations = cells_body(
-        columns = TRUE,
-        # This is a relatively sneaky way of changing the bottom border
-        # Regardless of data size
-        rows = nrow(data$`_data`)
-      )
-    )  %>%
-    # Change font color and weight for numeric col
-    tab_style(
-      style = list(
-        cell_text(color = "#585d73", weight = "bolder")
-      ),
-      locations = cells_body(
-        columns = 1:7
-      )
-    ) %>%
-    opt_row_striping() %>%
-    tab_options(
-      column_labels.background.color = "black",
-      table.border.top.width = px(2),
-      table.border.top.color = "transparent",
-      table.border.bottom.color = "transparent",
-      table.border.bottom.width = px(2),
-      column_labels.border.top.width = px(3),
-      column_labels.border.top.color = "transparent",
-      column_labels.border.bottom.width = px(3),
-      column_labels.border.bottom.color = "transparent",
-      row.striping.background_color = "#FFFDE9",
-      data_row.padding = px(10),
-      heading.align = "center",
-      ...
-    ) 
-}
-
-create_headtohead <- function(tm1) {
-  
-  # Import font from sysfonts
-  sysfonts::font_add_google("Roboto", "Roboto")
-  showtext_auto()
-  
-  
-  # Filter data for the specific user_name
-  user_data <- df %>%
-    filter(tm == tm1) %>%
-    arrange(-wins, -avg_mrg) # arrange players by ECR
-  
-  # Create the gt table and apply filter
-  gt_table <- user_data %>%
-    select(-tm, opp, wins, losses, percent = winperc, pf, pa, avg_mrg) %>%
-    gt() %>%
-    tab_header(title = md("**All-Time Head to Head Results**"),
-               subtitle = paste(tm)) %>%
-    fmt_number(
-      columns = 4:5,
-      decimals = 0
-    ) %>% 
-    gt_theme_h2h()
-  
-  return(gt_table)
-  
-}
-
-unique_tms <- unique(df$tm)
-
-for (tm in unique_tms) {
-  gt_table <- create_headtohead(tm)
-  
-  gtsave(gt_table,
-         paste0("output/headtohead/", tm, "_head_to_head.png"))
-}
-
-# Last Year Schedule -------------------
-
-seasonrecap <- full_schedule |>
-  filter(season == 2022)
-
 gt_theme_schedule <- function(data,...) {
   data %>%
     opt_all_caps()  %>%
@@ -929,16 +764,58 @@ gt_theme_schedule <- function(data,...) {
       table.border.top.color = "#7180AC",
       table.border.bottom.color = "#7180AC",
       table.border.bottom.width = px(2),
-      column_labels.border.top.width = px(3),
-      column_labels.border.top.color = "transparent",
-      column_labels.border.bottom.width = px(3),
-      column_labels.border.bottom.color = "transparent",
+      column_labels.border.top.width = px(2),
+      column_labels.border.top.color = "#7180AC",
+      column_labels.border.bottom.width = px(2),
+      column_labels.border.bottom.color = "#7180AC",
       row.striping.background_color = "#FFFDE9",
       data_row.padding = px(10),
       heading.align = "center",
       ...
     ) 
 } 
+
+create_headtohead <- function(tm1) {
+  
+  # Import font from sysfonts
+  sysfonts::font_add_google("Roboto", "Roboto")
+  showtext_auto()
+  
+  
+  # Filter data for the specific user_name
+  user_data <- df %>%
+    filter(tm == tm1) %>%
+    arrange(-wins, -avg_mrg) # arrange players by ECR
+  
+  # Create the gt table and apply filter
+  gt_table <- user_data %>%
+    select(-tm, opp, wins, losses, percent = winperc, pf, pa, avg_mrg) %>%
+    gt() %>%
+    tab_header(title = md("**All-Time Head to Head Results**"),
+               subtitle = paste(tm)) %>%
+    fmt_number(
+      columns = 4:5,
+      decimals = 0
+    ) %>% 
+    gt_theme_schedule()
+  
+  return(gt_table)
+  
+}
+
+unique_tms <- unique(df$tm)
+
+for (tm in unique_tms) {
+  gt_table <- create_headtohead(tm)
+  
+  gtsave(gt_table,
+         paste0("output/headtohead/", tm, "_head_to_head.png"))
+}
+
+# Last Year Schedule -------------------
+
+seasonrecap <- full_schedule |>
+  filter(season == 2022)
 
 get_season_recap <- function(tm1) {
   # Import font from sysfonts
@@ -987,5 +864,47 @@ for (tm in unique_tms) {
   gtsave(gt_table,
          paste0("output/py_schedule/season_results_",tm,".png"))
 }
+
+
+
+# Blowouts ----------
+blowouts <- full_schedule |>
+  mutate(margin = tm_score - opp_score) |>
+  arrange(-margin) |>
+  head(15)
+
+# Create the gt table and apply filter
+gt_table <- blowouts %>%
+  select(season, week, victor = tm, loser = opp, pf = tm_score, pa = opp_score, margin) %>%
+  gt() %>%
+  tab_header(title = md("**Top-15 Blowouts**")) %>%
+  fmt_number(
+    columns = 5:7,
+    decimals = 0
+  ) %>% 
+  gt_theme_schedule()
+
+gtsave(gt_table,"output/history/blowouts.png")
+
+# Nail Biters ----------
+closecalls <- full_schedule |>
+  mutate(margin = tm_score - opp_score) |>
+  filter(margin > 0) |>
+  arrange(margin) |>
+  head(15)
+
+
+# Create the gt table and apply filter
+gt_table <- closecalls %>%
+  select(season, week, victor = tm, loser = opp, pf = tm_score, pa = opp_score, margin) %>%
+  gt() %>%
+  tab_header(title = md("**Top-15 Close Calls**")) %>%
+  fmt_number(
+    columns = 5:7,
+    decimals = 1
+  ) %>% 
+  gt_theme_schedule()
+
+gtsave(gt_table,"output/history/closecalls.png")
 
 
