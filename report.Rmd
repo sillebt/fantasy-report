@@ -32,6 +32,7 @@ library(tidyverse)
 library(readxl)
 library(flextable)
 library(janitor)
+library(kableExtra)
 
 ```
 
@@ -50,29 +51,29 @@ knitr::opts_chunk$set(
 
 This is America, gentlemen, you play to win. If it is ping-pong or a hot dog eating contest, you play to win. That is how you go about this business we call Dynasty Fantasy Football. It is all about getting that sweet, sweet taste of victory.
 
-Maybe you won last year. Maybe you didn't deserve to, either. Doesn't matter to me. **If you like chocolate cake and you eat a piece, and then you have one dangling in front of your face, you're going to want to eat that too.** And hungry dogs run faster. 
+Maybe you won last year. Maybe you didn't deserve to, either. Doesn't matter to me. If you like chocolate cake and you eat a piece, and then you have one dangling in front of your face, you're going to want to eat that too. And hungry dogs run faster. 
 
 This isn't gonna be easy but its gonna be worth it. Building a dynasty team, cultivating these players, it's a lot like a great burger. It’s hard, I mean, you have to execute that thing just the right way. You have to get it to where it’s perfect and juicy when you cut it open but not raw. Then add a nice slice of a Vidalia onion, some mayo, ketchup, a little squirt of mustard - but not too much - pickles, lettuce and tomato and baby I’m ready to roll. 
 
-To put all that together and make it perfect, there’s some time involved. That’s where the real work comes in. **You practice, you get it right, you perfect your craft and then when you finally bite into it, hoo boy, that's ecstasy right there. So, that’s why we play.** In my book, there isn't a real man alive who doesn't love a good hamburger and a clean hit of ecstasy. Call me old fashioned.
+To put all that together and make it perfect, there’s some time involved. That’s where the real work comes in. You practice, you get it right, you perfect your craft and then when you finally bite into it, hoo boy, that's ecstasy right there. So, that’s why we play. In my book, there isn't a real man alive who doesn't love a good hamburger and a clean hit of ecstasy. Call me old fashioned.
 
 There's a lot of ways to win this league. In some ways you want to keep the roster young. And at the same time you need those veterans who make you feel older. That’s a delicate blend, not unlike sweet and sour pork. 
 
-So go attack this thing, boys. Attack it like I went after a few Chile Rellenos the other night. Because if you get that trophy, it's a special feeling, man. It means it all paid off. It'll mean something to you forever. When you sit back and look at that dick-shaped hunk of metal with your name on it, it brings a smile to your face. **It's like a Snickers in the freezer, right? It's treasured.**
+So go attack this thing, boys. Attack it like I went after a few Chile Rellenos the other night. Because if you get that trophy, it's a special feeling, man. It means it all paid off. It'll mean something to you forever. When you sit back and look at that dick-shaped hunk of metal with your name on it, it brings a smile to your face. It's like a Snickers in the freezer, right? It's treasured.
 
 
 ![The Goal](img/confetti.png){fig.align='center'}
 
 \newpage
-## The Results
+## The Results 
 
 ### Final Standings
-<p style="text-align: center;">**All-Time Dynasty Standings & 2022**</p>
+<p style="text-align: center;">**All-Time Dynasty Standings & 2022 Final Regular Season Standings**</p>
 ```{r, echo=FALSE,out.width="50%",out.height="50%",fig.show='hold',fig.align='center', fig.cap="Standings"}
 knitr::include_graphics(c("output/history/all_time_standings.png","output/history/2022_standings.png"))
 ```
 \newpage
-<p style="text-align: center;">**2021 & 2020**</p>
+<p style="text-align: center;">**2021 & 2020 Final Regular Season Standings**</p>
 ```{r, echo=FALSE,out.width="50%",out.height="50%",fig.show='hold',fig.align='center', fig.cap="Standings"}
 knitr::include_graphics(c("output/history/2021_standings.png","output/history/2020_standings.png"))
 ```
@@ -83,6 +84,7 @@ knitr::include_graphics(c("output/history/2021_standings.png","output/history/20
 knitr::include_graphics(c("output/history/blowouts.png","output/history/closecalls.png"))
 ```
 \newpage
+
 ## The Franchises
 
 It's almost Week 1 and these are the final rosters each Franchise has selected, by choice or not, to take the field. 
@@ -119,7 +121,7 @@ _Notes on Methodology:_
 ### Alanasty
 <p style="text-align: center;">**2023 Roster & 2022 Player Statistics**</p>
 ```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics(c("output/2023/dynasty_roster_Alanasty.png","output/2022/dynasty_rosterAlanasty.png"))
+knitr::include_graphics(c("output/2023/dynasty_roster_Alanasty.png","output/2022/dynasty_roster_Alanasty.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
@@ -130,7 +132,7 @@ knitr::include_graphics(c("output/headtohead/JP_head_to_head.png","output/py_sch
 ### The Iron Banki
 <p style="text-align: center;">**2023 Roster & 2022 Player Statistics**</p>
 ```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics(c("output/2023/dynasty_roster_Naaderbanki.png","output/2022/dynasty_rosterNaaderbanki.png"))
+knitr::include_graphics(c("output/2023/dynasty_roster_Naaderbanki.png","output/2022/dynasty_roster_Naaderbanki.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
@@ -141,7 +143,7 @@ knitr::include_graphics(c("output/headtohead/Naad_head_to_head.png","output/py_s
 ### Montel's A$$Men
 <p style="text-align: center;">**2023 Roster & 2022 Player Statistics**</p>
 ```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics(c("output/2023/dynasty_roster_Asmontalvo.png","output/2022/dynasty_rosterAsmontalvo.png"))
+knitr::include_graphics(c("output/2023/dynasty_roster_Asmontalvo.png","output/2022/dynasty_roster_Asmontalvo.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
@@ -152,7 +154,7 @@ knitr::include_graphics(c("output/headtohead/Montel_head_to_head.png","output/py
 ### Dick Chubb's Golden Taint
 <p style="text-align: center;">**2023 Roster & 2022 Player Statistics**</p>
 ```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics(c("output/2023/dynasty_roster_Nhosta.png","output/2022/dynasty_rosterNhosta.png"))
+knitr::include_graphics(c("output/2023/dynasty_roster_Nhosta.png","output/2022/dynasty_roster_Nhosta.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
@@ -163,7 +165,7 @@ knitr::include_graphics(c("output/headtohead/Hosta_head_to_head.png","output/py_
 ### Andy Reid's Briskett
 <p style="text-align: center;">**2023 Roster & 2022 Player Statistics**</p>
 ```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics(c("output/2023/dynasty_roster_Bellist.png","output/2022/dynasty_rosterBellist.png"))
+knitr::include_graphics(c("output/2023/dynasty_roster_Bellist.png","output/2022/dynasty_roster_Bellist.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
@@ -174,7 +176,7 @@ knitr::include_graphics(c("output/headtohead/Tom_head_to_head.png","output/py_sc
 ### Zac GOFFrey
 <p style="text-align: center;">**2023 Roster & 2022 Player Statistics**</p>
 ```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics(c("output/2023/dynasty_roster_Zacgeoffray.png","output/2022/dynasty_rosterZacgeoffray.png"))
+knitr::include_graphics(c("output/2023/dynasty_roster_Zacgeoffray.png","output/2022/dynasty_roster_Zacgeoffray.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
@@ -185,7 +187,7 @@ knitr::include_graphics(c("output/headtohead/Zac_head_to_head.png","output/py_sc
 ### John Wick, M.D.
 <p style="text-align: center;">**2023 Roster & 2022 Player Statistics**</p>
 ```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics(c("output/2023/dynasty_roster_Johnwickmd.png","output/2022/dynasty_rosterJohnwickmd.png"))
+knitr::include_graphics(c("output/2023/dynasty_roster_Johnwickmd.png","output/2022/dynasty_roster_Johnwickmd.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
@@ -196,7 +198,7 @@ knitr::include_graphics(c("output/headtohead/Aviel_head_to_head.png","output/py_
 ### Team Conor
 <p style="text-align: center;">**2023 Roster & 2022 Player Statistics**</p>
 ```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics(c("output/2023/dynasty_roster_Cpmadden1.png","output/2022/dynasty_rosterCpmadden1.png"))
+knitr::include_graphics(c("output/2023/dynasty_roster_Cpmadden1.png","output/2022/dynasty_roster_Cpmadden1.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
@@ -207,7 +209,7 @@ knitr::include_graphics(c("output/headtohead/Conor_head_to_head.png","output/py_
 ### El Randal
 <p style="text-align: center;">**2023 Roster & 2022 Player Statistics**</p>
 ```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics(c("output/2023/dynasty_roster_Elrandal.png","output/2022/dynasty_rosterElrandal.png"))
+knitr::include_graphics(c("output/2023/dynasty_roster_Elrandal.png","output/2022/dynasty_roster_Elrandal.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
@@ -218,27 +220,29 @@ knitr::include_graphics(c("output/headtohead/Randal_head_to_head.png","output/py
 ### Team Tommy T-sao
 <p style="text-align: center;">**2023 Roster & 2022 Player Statistics**</p>
 ```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics(c("output/2023/dynasty_roster_Ttsao.png","output/2022/dynasty_rosterTtsao.png"))
+knitr::include_graphics(c("output/2023/dynasty_roster_Ttsao.png","output/2022/dynasty_roster_Ttsao.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
 ```{r, echo=FALSE,out.width="50%",out.height="50%",fig.show='hold',fig.align='top', fig.cap="The Results"}
 knitr::include_graphics(c("output/headtohead/Tommy_head_to_head.png","output/py_schedule/season_results_Tommy.png"))
 ```
+\newpage
 ### Trick aka pbpablo
 <p style="text-align: center;">**2023 Roster & 2022 Player Statistics**</p>
 ```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics(c("output/2023/dynasty_roster_Pdpablo.png","output/2022/dynasty_rosterPdpablo.png"))
+knitr::include_graphics(c("output/2023/dynasty_roster_Pdpablo.png","output/2022/dynasty_roster_Pdpablo.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
 ```{r, echo=FALSE,out.width="50%",out.height="50%",fig.show='hold',fig.align='top', fig.cap="The Results"}
 knitr::include_graphics(c("output/headtohead/Patrick_head_to_head.png","output/py_schedule/season_results_Patrick.png"))
 ```
+\newpage
 ### slobonmynoblin (RIP)
 <p style="text-align: center;">**2023 Roster & 2022 Player Statistics**</p>
 ```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics(c("output/2023/dynasty_roster_Slobonmynoblin.png","output/2022/dynasty_rosterSlobonmynoblin.png"))
+knitr::include_graphics(c("output/2023/dynasty_roster_Slobonmynoblin.png","output/2022/dynasty_roster_Slobonmynoblin.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
