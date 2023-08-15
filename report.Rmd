@@ -165,7 +165,6 @@ _Notes on Methodology:_
 4. Bench Players Limited to **Top 10 by FantasyPros Ranking** 
 
 
-
 ### Alanasty
 :::::: {.cols data-latex=""}
 
@@ -616,40 +615,28 @@ a column separator -->
 :::
 
 ::: {.col data-latex="{0.35\textwidth}"}
-The figure on the left-hand side shows the `power_ranking` data.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
+Conor is very down on his team. Rather than roast it, here is what Mike Tomlin would most likely say about it using 100% authentic, full Mike Tomlin quotes: 
 
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
+"The standard is the standard.
 
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscin 
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
+Last year was not it. Not a little bit disappointed. Disappointed. Certainly. I can sit here and talk about what should be, coulda been, expectations. Well, I’m not concerned about avoiding anything that happened one, two, three years ago or letdowns, things of that nature. When you use the term ‘letdown’ you proceed with the assumption that this is a continuation of something that happened in the past. I'm not into moral victories. I'm into victories. A moral victory is for the people who need it. We're not looking for a participation trophy. Man, I'm fucking working here. 
 
+
+It's a fine line between drinking wine and squashing grapes, as we say in this business. Last year was the jello we couldn't get back in the box. We go into stadiums, gentlemen. It's a competitive game, a hostile environment. If we're gonna box, then I wanna spare. If this team doesn't face enough adversity early in a season, I create it. Sometimes you've got to cut your eyelids off when you want to blink, when it gets thick. The objective is to get out of the stadium alive. I'll tolerate you until I can replace you. Unleash hell. You know what I came to see. Give it to me, baby!
+
+
+HEY! HEY! You listening, Conor? You blink and I will cut your eyelids off. 
+
+
+We can’t do this with hostages. We're not working on a small menu. And I'm not a big fan of the term 'rebuilding.' I prefer "reloading". And, I don't do hypotheticals. I know that we have some plays that need to be made, and somebody has to make them. There’s going to be some joyful lifting for us, if you will, in terms of those tasks. We’re still squirreling with those nuts. 
+
+
+I'm a big believer in the idea that if you put in the work, the results will come. It's not about what we want to do, it's about what we do. The standard is the standard." 
+
+
+- Mike Tomlin
 :::
 ::::::
 
