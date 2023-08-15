@@ -244,7 +244,7 @@ all_time_standings <- full_schedule |>
              subtitle = md("**All-Time Standings**")) |>
   gt_theme_espn() |>
   cols_align("left", columns = tm) |>
-  tab_options(data_row.padding = px(5)) |>
+  tab_options(data_row.padding = px(3)) |>
   tab_source_note(md("**Season: 2020-2022 | PF/PA Represent Avg/Gm**"))
 
 gtsave(all_time_standings, 'output/history/all_time_standings.png')
@@ -270,7 +270,7 @@ standings22 <- full_schedule |>
              subtitle = md("**Tommy's Tainted Trophy**")) |>
   gt_theme_espn() |>
   cols_align("left", columns = tm) |>
-  tab_options(data_row.padding = px(5)) |>
+  tab_options(data_row.padding = px(3)) |>
   tab_source_note(md("**Season: 2022 | PF/PA Represent Avg/Gm**"))
 
 gtsave(standings22, 'output/history/2022_standings.png')
@@ -296,7 +296,7 @@ standings21 <- full_schedule |>
              subtitle = md("**Iron Banki Claims His Throne**")) |>
   gt_theme_espn() |>
   cols_align("left", columns = tm) |>
-  tab_options(data_row.padding = px(5)) |>
+  tab_options(data_row.padding = px(3)) |>
   tab_source_note(md("**Season: 2021 | PF/PA Represent Avg/Gm**"))
 
 gtsave(standings21, 'output/history/2021_standings.png')
@@ -322,7 +322,7 @@ standings20 <- full_schedule |>
              subtitle = md("**Nicks Chubb's Golden Taint**")) |>
   gt_theme_espn() |>
   cols_align("left", columns = tm) |>
-  tab_options(data_row.padding = px(5)) |>
+  tab_options(data_row.padding = px(3)) |>
   tab_source_note(md("**Season: 2020 | PF/PA Represent Avg/Gm**"))
 
 gtsave(standings20, 'output/history/2020_standings.png')
@@ -348,7 +348,7 @@ all_time_post_standings <- full_schedule |>
              subtitle = md("**All-Time Playoff Standings**")) |>
   gt_theme_espn() |>
   cols_align("left", columns = tm) |>
-  tab_options(data_row.padding = px(5)) |>
+  tab_options(data_row.padding = px(3)) |>
   tab_source_note(md("**Season: 2020-2022 | PF/PA Represent Avg/Gm**"))
 
 gtsave(all_time_post_standings, 'output/history/all_time_post_standings.png')
@@ -501,16 +501,16 @@ gt_theme_pff <- function(data, ...) {
     tab_options(
       column_labels.background.color = "#585d73",
       table_body.hlines.color = "transparent",
-      table.border.top.width = px(3),
+      table.border.top.width = px(2),
       table.border.top.color = "transparent",
       table.border.bottom.color = "transparent",
-      table.border.bottom.width = px(3),
-      column_labels.border.top.width = px(3),
+      table.border.bottom.width = px(2),
+      column_labels.border.top.width = px(2),
       column_labels.border.top.color = "transparent",
-      column_labels.border.bottom.width = px(3),
+      column_labels.border.bottom.width = px(2),
       column_labels.border.bottom.color = "transparent",
       row.striping.background_color = "#FFFDE9",
-      data_row.padding = px(10),
+      data_row.padding= px(6),
       ...
     ) %>% 
     # change font to Lato throughout (note no need to have Lato locally!)
@@ -683,16 +683,16 @@ gt_theme_538 <- function(data,...) {
     tab_options(
       column_labels.background.color = "#585d73",
       table_body.hlines.color = "transparent",
-      table.border.top.width = px(3),
+      table.border.top.width = px(2),
       table.border.top.color = "transparent",
       table.border.bottom.color = "transparent",
-      table.border.bottom.width = px(3),
-      column_labels.border.top.width = px(3),
+      table.border.bottom.width = px(2),
+      column_labels.border.top.width = px(2),
       column_labels.border.top.color = "transparent",
-      column_labels.border.bottom.width = px(3),
+      column_labels.border.bottom.width = px(2),
       column_labels.border.bottom.color = "transparent",
       row.striping.background_color = "#FFFDE9",
-      data_row.padding = px(10),
+      data_row.padding= px(6),
       ...
     ) %>% 
     # change font to Lato throughout (note no need to have Lato locally!)
@@ -812,7 +812,7 @@ gt_theme_schedule <- function(data,...) {
     ) %>%
     tab_style(
       style = cell_borders(
-        sides = "all", color = "#585d73", weight = px(2)
+        sides = "all", color = "#585d73", weight = px(1)
       ),
       locations = cells_body(
         columns = everything(),
@@ -832,7 +832,7 @@ gt_theme_schedule <- function(data,...) {
       column_labels.border.lr.width = px(2),
       column_labels.border.lr.color = '#585d73',
       row.striping.background_color = "#FFFDE9",
-      data_row.padding = px(10),
+      data_row.padding= px(6),
       heading.align = "center",
       ...
     ) 
@@ -1022,7 +1022,7 @@ gt_theme_schedule <- function(data,...) {
     ) %>%
     tab_style(
       style = cell_borders(
-        sides = "all", color = "#585d73", weight = px(2)
+        sides = "all", color = "#585d73", weight = px(1)
       ),
       locations = cells_body(
         columns = everything(),
@@ -1042,7 +1042,7 @@ gt_theme_schedule <- function(data,...) {
       column_labels.border.lr.width = px(2),
       column_labels.border.lr.color = '#585d73',
       row.striping.background_color = "#FFFDE9",
-      data_row.padding = px(10),
+      data_row.padding= px(6),
       heading.align = "center",
       ...
     ) 
@@ -1134,7 +1134,7 @@ all_time_power_rank <- all_time_standings_power_rank |>
              subtitle = "Adj by League Season Avg") |>
   gt_theme_espn() |>
   cols_align("left", columns = team) |>
-  tab_options(data_row.padding = px(5)) |>
+  tab_options(data_row.padding = px(3)) |>
   tab_source_note(md("**Calc**: 60% Avg PF, 20% Win %, 20% PF Variance"))
 
 gtsave(all_time_power_rank, 'output/history/all_time_power_rank_standings_yearly.png')
@@ -1187,7 +1187,7 @@ all_time_tm_power_rank <- all_time_player_power_rank |>
              subtitle = "2020-22 Regular Season Totals") |>
   gt_theme_espn() |>
   cols_align("left", columns = team) |>
-  tab_options(data_row.padding = px(5)) |>
+  tab_options(data_row.padding = px(3)) |>
   tab_source_note(md("**Calc**: 60% Avg PF, 20% Win %, 20% PF Variance"))
 
 gtsave(all_time_tm_power_rank, 'output/history/all_time_power_rank_standings_owner.png')

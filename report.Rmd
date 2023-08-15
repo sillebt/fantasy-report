@@ -77,7 +77,7 @@ So go attack this thing, boys. Attack it like I went after a few Chile Rellenos 
 
 ### Final Standings
 <p style="text-align: center;">**All-Time Dynasty Standings & 2022 Final Regular Season Standings**</p>
-```{r, echo=FALSE,out.width="50%",out.height="50%",fig.show='hold',fig.align='center', fig.cap="Standings"}
+```{r, echo=FALSE,out.width="49%",out.height="49%",fig.show='hold',fig.align='center', fig.cap="Standings"}
 knitr::include_graphics(c("output/history/all_time_standings.png","output/history/2022_standings.png"))
 ```
 \newpage
@@ -88,7 +88,7 @@ knitr::include_graphics(c("output/history/2021_standings.png","output/history/20
 \newpage
 ### Notable Matchups
 <p style="text-align: center;">**Blowouts and Nail Biters**</p>
-```{r, echo=FALSE,out.width="63%",out.height="63%",fig.show='hold',fig.align='center', fig.cap="Just Win, Baby!"}
+```{r, echo=FALSE,out.width="50%",out.height="50%",fig.show='hold',fig.align='center', fig.cap="Just Win, Baby!"}
 knitr::include_graphics(c("output/history/blowouts.png","output/history/closecalls.png"))
 ```
 
@@ -164,740 +164,133 @@ _Notes on Methodology:_
 
 4. Bench Players Limited to **Top 10 by FantasyPros Ranking** 
 
-
+\newpage
 ### Alanasty
-:::::: {.cols data-latex=""}
-
-::: {.col data-latex="{0.6\textwidth}"}
-```{r, echo=FALSE, fig.width=4, fig.height=8}
-knitr::include_graphics("output/2023/dynasty_roster_Alanasty.png")
-```
-:::
-
-::: {.col data-latex="{0.05\textwidth}"}
-\ 
-<!-- an empty Div (with a white space), serving as
-a column separator -->
-:::
-
-::: {.col data-latex="{0.35\textwidth}"}
-The figure on the left-hand side shows the `power_ranking` data.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscin 
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-:::
-::::::
-
-<p style="text-align: center;">**2022 Player Statistics**</p>
-```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics("output/2022/dynasty_roster_Alanasty.png")
+<p style="text-align: center;">**2023 Proj. & 2022 Final Rosters**</p>
+```{r, echo=FALSE,out.width="70%",out.height="70%",fig.show='hold',fig.align='center', fig.cap="The Ballers"}
+knitr::include_graphics(c("output/2023/dynasty_roster_Alanasty.png","output/2022/dynasty_roster_Alanasty.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
-```{r, echo=FALSE,out.width="50%",out.height="50%",fig.show='hold',fig.align='top', fig.cap="The Results"}
+```{r, echo=FALSE,out.width="48%",out.height="48%",fig.show='hold',fig.align='center', fig.cap="The Outcomes"}
 knitr::include_graphics(c("output/headtohead/JP_head_to_head.png","output/py_schedule/season_results_JP.png"))
 ```
-
+\newpage
 ### The Iron Banki
-:::::: {.cols data-latex=""}
-
-::: {.col data-latex="{0.6\textwidth}"}
-```{r, echo=FALSE}
-knitr::include_graphics("output/2023/dynasty_roster_Naaderbanki.png")
-```
-:::
-
-::: {.col data-latex="{0.05\textwidth}"}
-\ 
-<!-- an empty Div (with a white space), serving as
-a column separator -->
-:::
-
-::: {.col data-latex="{0.35\textwidth}"}
-The figure on the left-hand side shows the `power_ranking` data.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscin 
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-:::
-::::::
-
-<p style="text-align: center;">**2022 Player Statistics**</p>
-```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics("output/2022/dynasty_roster_Naaderbanki.png")
+<p style="text-align: center;">**2023 Proj. & 2022 Final Rosters**</p>
+```{r, echo=FALSE,out.width="70%",out.height="70%",fig.show='hold',fig.align='center', fig.cap="The Ballers"}
+knitr::include_graphics(c("output/2023/dynasty_roster_Naaderbanki.png","output/2022/dynasty_roster_Naaderbanki.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
-```{r, echo=FALSE,out.width="50%",out.height="50%",fig.show='hold',fig.align='top', fig.cap="The Results"}
+```{r, echo=FALSE,out.width="48%",out.height="48%",fig.show='hold',fig.align='center', fig.cap="The Outcomes"}
 knitr::include_graphics(c("output/headtohead/Naad_head_to_head.png","output/py_schedule/season_results_Naad.png"))
 ```
-
-### Montel's A$$Men
-:::::: {.cols data-latex=""}
-
-::: {.col data-latex="{0.6\textwidth}"}
-```{r, echo=FALSE}
-knitr::include_graphics("output/2023/dynasty_roster_Asmontalvo.png")
-```
-:::
-
-::: {.col data-latex="{0.05\textwidth}"}
-\ 
-<!-- an empty Div (with a white space), serving as
-a column separator -->
-:::
-
-::: {.col data-latex="{0.35\textwidth}"}
-The figure on the left-hand side shows the `power_ranking` data.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscin 
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-:::
-::::::
-
-<p>**2022 Player Statistics**</p>
-```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics("output/2022/dynasty_roster_Asmontalvo.png")
+\newpage
+### Montel's A$$men
+<p style="text-align: center;">**2023 Proj. & 2022 Final Rosters**</p>
+```{r, echo=FALSE,out.width="70%",out.height="70%",fig.show='hold',fig.align='center', fig.cap="The Ballers"}
+knitr::include_graphics(c("output/2023/dynasty_roster_Asmontalvo.png","output/2022/dynasty_roster_Asmontalvo.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
-```{r, echo=FALSE,out.width="50%",out.height="50%",fig.show='hold',fig.align='top', fig.cap="The Results"}
+```{r, echo=FALSE,out.width="48%",out.height="48%",fig.show='hold',fig.align='center', fig.cap="The Outcomes"}
 knitr::include_graphics(c("output/headtohead/Montel_head_to_head.png","output/py_schedule/season_results_Montel.png"))
 ```
-
-### Dick Chubb's Golden Taint
-:::::: {.cols data-latex=""}
-
-::: {.col data-latex="{0.6\textwidth}"}
-```{r, echo=FALSE}
-knitr::include_graphics("output/2023/dynasty_roster_Nhosta.png")
-```
-:::
-
-::: {.col data-latex="{0.05\textwidth}"}
-\ 
-<!-- an empty Div (with a white space), serving as
-a column separator -->
-:::
-
-::: {.col data-latex="{0.35\textwidth}"}
-The figure on the left-hand side shows the `power_ranking` data.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscin 
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-:::
-::::::
-
-<p style="text-align: center;">**2022 Player Statistics**</p>
-```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics("output/2022/dynasty_roster_Nhosta.png")
+\newpage
+### Dick Chubb
+<p style="text-align: center;">**2023 Proj. & 2022 Final Rosters**</p>
+```{r, echo=FALSE,out.width="70%",out.height="70%",fig.show='hold',fig.align='center', fig.cap="The Ballers"}
+knitr::include_graphics(c("output/2023/dynasty_roster_Nhosta.png","output/2022/dynasty_roster_Nhosta.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
-```{r, echo=FALSE,out.width="50%",out.height="50%",fig.show='hold',fig.align='top', fig.cap="The Results"}
+```{r, echo=FALSE,out.width="48%",out.height="48%",fig.show='hold',fig.align='center', fig.cap="The Outcomes"}
 knitr::include_graphics(c("output/headtohead/Hosta_head_to_head.png","output/py_schedule/season_results_Hosta.png"))
 ```
-
+\newpage
 ### Andy Reid's Briskett
-:::::: {.cols data-latex=""}
-
-::: {.col data-latex="{0.6\textwidth}"}
-```{r, echo=FALSE}
-knitr::include_graphics("output/2023/dynasty_roster_Bellist.png")
-```
-:::
-
-::: {.col data-latex="{0.05\textwidth}"}
-\ 
-<!-- an empty Div (with a white space), serving as
-a column separator -->
-:::
-
-::: {.col data-latex="{0.35\textwidth}"}
-The figure on the left-hand side shows the `power_ranking` data.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscin 
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-:::
-::::::
-
-<p style="text-align: center;">**2022 Player Statistics**</p>
-```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics("output/2022/dynasty_roster_Bellist.png")
+<p style="text-align: center;">**2023 Proj. & 2022 Final Rosters**</p>
+```{r, echo=FALSE,out.width="70%",out.height="70%",fig.show='hold',fig.align='center', fig.cap="The Ballers"}
+knitr::include_graphics(c("output/2023/dynasty_roster_Bellist.png","output/2022/dynasty_roster_Bellist.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
-```{r, echo=FALSE,out.width="50%",out.height="50%",fig.show='hold',fig.align='top', fig.cap="The Results"}
+```{r, echo=FALSE,out.width="48%",out.height="48%",fig.show='hold',fig.align='center', fig.cap="The Outcomes"}
 knitr::include_graphics(c("output/headtohead/Tom_head_to_head.png","output/py_schedule/season_results_Tom.png"))
 ```
-
+\newpage
 ### Zac GOFFrey
-:::::: {.cols data-latex=""}
-
-::: {.col data-latex="{0.6\textwidth}"}
-```{r, echo=FALSE}
-knitr::include_graphics("output/2023/dynasty_roster_Zacgeoffray.png")
-```
-:::
-
-::: {.col data-latex="{0.05\textwidth}"}
-\ 
-<!-- an empty Div (with a white space), serving as
-a column separator -->
-:::
-
-::: {.col data-latex="{0.35\textwidth}"}
-The figure on the left-hand side shows the `power_ranking` data.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscin 
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-:::
-::::::
-
-<p style="text-align: center;">**2022 Player Statistics**</p>
-```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics("output/2022/dynasty_roster_Zacgeoffray.png")
+<p style="text-align: center;">**2023 Proj. & 2022 Final Rosters**</p>
+```{r, echo=FALSE,out.width="70%",out.height="70%",fig.show='hold',fig.align='center', fig.cap="The Ballers"}
+knitr::include_graphics(c("output/2023/dynasty_roster_Zacgeoffray.png","output/2022/dynasty_roster_Zacgeoffray.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
-```{r, echo=FALSE,out.width="50%",out.height="50%",fig.show='hold',fig.align='top', fig.cap="The Results"}
+```{r, echo=FALSE,out.width="48%",out.height="48%",fig.show='hold',fig.align='center', fig.cap="The Outcomes"}
 knitr::include_graphics(c("output/headtohead/Zac_head_to_head.png","output/py_schedule/season_results_Zac.png"))
 ```
-
+\newpage
 ### John Wick, M.D.
-:::::: {.cols data-latex=""}
-
-::: {.col data-latex="{0.6\textwidth}"}
-```{r, echo=FALSE}
-knitr::include_graphics("output/2023/dynasty_roster_Johnwickmd.png")
-```
-:::
-
-::: {.col data-latex="{0.05\textwidth}"}
-\ 
-<!-- an empty Div (with a white space), serving as
-a column separator -->
-:::
-
-::: {.col data-latex="{0.35\textwidth}"}
-The figure on the left-hand side shows the `power_ranking` data.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscin 
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-:::
-::::::
-
-<p style="text-align: center;">**2022 Player Statistics**</p>
-```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics("output/2022/dynasty_roster_Johnwickmd.png")
+<p style="text-align: center;">**2023 Proj. & 2022 Final Rosters**</p>
+```{r, echo=FALSE,out.width="70%",out.height="70%",fig.show='hold',fig.align='center', fig.cap="The Ballers"}
+knitr::include_graphics(c("output/2023/dynasty_roster_Johnwickmd.png","output/2022/dynasty_roster_Johnwickmd.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
-```{r, echo=FALSE,out.width="50%",out.height="50%",fig.show='hold',fig.align='top', fig.cap="The Results"}
+```{r, echo=FALSE,out.width="48%",out.height="48%",fig.show='hold',fig.align='center', fig.cap="The Outcomes"}
 knitr::include_graphics(c("output/headtohead/Aviel_head_to_head.png","output/py_schedule/season_results_Aviel.png"))
 ```
-
-### Team Conor
-:::::: {.cols data-latex=""}
-
-::: {.col data-latex="{0.6\textwidth}"}
-```{r, echo=FALSE}
-knitr::include_graphics("output/2023/dynasty_roster_Cpmadden1.png")
-```
-:::
-
-::: {.col data-latex="{0.05\textwidth}"}
-\ 
-<!-- an empty Div (with a white space), serving as
-a column separator -->
-:::
-
-::: {.col data-latex="{0.35\textwidth}"}
-Conor is very down on his team. Rather than roast it, here is what Mike Tomlin would most likely say about it using 100% authentic, full Mike Tomlin quotes: 
-
-
-"**The standard is the standard.**
-
-
-Last year was not it. Not a little bit disappointed. Disappointed. Certainly. I can sit here and talk about what should be, coulda been, expectations. Well, I’m not concerned about avoiding anything that happened one, two, three years ago or letdowns, things of that nature. When you use the term ‘letdown’ you proceed with the assumption that this is a continuation of something that happened in the past. I'm not into moral victories. I'm into victories. A moral victory is for the people who need it. We're not looking for a participation trophy. Man, I'm fucking working here. Unleash hell on those nameless gray faces.
-
-
-It's a fine line between drinking wine and squashing grapes, as we say in this business. Last year was the jello we couldn't get back in the box. We go into stadiums, gentlemen. It's a competitive game, a hostile environment. If we're gonna box, then I wanna spare. If this team doesn't face enough adversity early in a season, I create it. Sometimes you've got to cut your eyelids off when you want to blink, when it gets thick. The objective is to get out of the stadium alive. I'll tolerate you until I can replace you. Unleash hell. You know what I came to see. Give it to me, baby!
-
-
-HEY! HEY! You listening, Conor? You blink and I will cut your eyelids off. 
-
-
-We can’t do this with hostages. We're not working on a small menu. And I'm not a big fan of the term 'rebuilding.' I prefer "reloading". And, I don't do hypotheticals. I know that we have some plays that need to be made, and somebody on this roster has to make them. There’s going to be some joyful lifting for us, if you will. We’re still squirreling with those nuts. 
-
-
-It's not about what we want to do, it's about what we do. We make no excuses, we seek no comfort. It's like McDonalds. You know what #1 is, no matter what corner of the globe a #1 is a #1. That's what I want this football team to be. **The standard is the standard.**" 
-
-
-- Mike Tomlin
-:::
-::::::
-
-<p style="text-align: center;">**2022 Player Statistics**</p>
-```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics("output/2022/dynasty_roster_Cpmadden1.png")
+\newpage
+### Conor
+<p style="text-align: center;">**2023 Proj. & 2022 Final Rosters**</p>
+```{r, echo=FALSE,out.width="70%",out.height="70%",fig.show='hold',fig.align='center', fig.cap="The Ballers"}
+knitr::include_graphics(c("output/2023/dynasty_roster_Cpmadden1.png","output/2022/dynasty_roster_Cpmadden1.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
-```{r, echo=FALSE,out.width="50%",out.height="50%",fig.show='hold',fig.align='top', fig.cap="The Results"}
+```{r, echo=FALSE,out.width="48%",out.height="48%",fig.show='hold',fig.align='center', fig.cap="The Outcomes"}
 knitr::include_graphics(c("output/headtohead/Conor_head_to_head.png","output/py_schedule/season_results_Conor.png"))
 ```
-
+\newpage
 ### El Randal
-:::::: {.cols data-latex=""}
-
-::: {.col data-latex="{0.6\textwidth}"}
-```{r, echo=FALSE}
-knitr::include_graphics("output/2023/dynasty_roster_Elrandal.png")
-```
-:::
-
-::: {.col data-latex="{0.05\textwidth}"}
-\ 
-<!-- an empty Div (with a white space), serving as
-a column separator -->
-:::
-
-::: {.col data-latex="{0.35\textwidth}"}
-The figure on the left-hand side shows the `power_ranking` data.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscin 
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-:::
-::::::
-
-<p style="text-align: center;">**2022 Player Statistics**</p>
-```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics("output/2022/dynasty_roster_Elrandal.png")
+<p style="text-align: center;">**2023 Proj. & 2022 Final Rosters**</p>
+```{r, echo=FALSE,out.width="70%",out.height="70%",fig.show='hold',fig.align='center', fig.cap="The Ballers"}
+knitr::include_graphics(c("output/2023/dynasty_roster_Elrandal.png","output/2022/dynasty_roster_Elrandal.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
-```{r, echo=FALSE,out.width="50%",out.height="50%",fig.show='hold',fig.align='top', fig.cap="The Results"}
+```{r, echo=FALSE,out.width="48%",out.height="48%",fig.show='hold',fig.align='center', fig.cap="The Outcomes"}
 knitr::include_graphics(c("output/headtohead/Randal_head_to_head.png","output/py_schedule/season_results_Randal.png"))
 ```
-
-### Team Tommy T-sao
-:::::: {.cols data-latex=""}
-
-::: {.col data-latex="{0.6\textwidth}"}
-```{r, echo=FALSE}
-knitr::include_graphics("output/2023/dynasty_roster_Ttsao.png")
-```
-:::
-
-::: {.col data-latex="{0.05\textwidth}"}
-\ 
-<!-- an empty Div (with a white space), serving as
-a column separator -->
-:::
-
-::: {.col data-latex="{0.35\textwidth}"}
-The figure on the left-hand side shows the `power_ranking` data.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscin 
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-:::
-::::::
-
-<p style="text-align: center;">**2022 Player Statistics**</p>
-```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics("output/2022/dynasty_roster_Ttsao.png")
+\newpage
+### General T-sao Chicken
+<p style="text-align: center;">**2023 Proj. & 2022 Final Rosters**</p>
+```{r, echo=FALSE,out.width="70%",out.height="70%",fig.show='hold',fig.align='center', fig.cap="The Ballers"}
+knitr::include_graphics(c("output/2023/dynasty_roster_Ttsao.png","output/2022/dynasty_roster_Ttsao.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
-```{r, echo=FALSE,out.width="50%",out.height="50%",fig.show='hold',fig.align='top', fig.cap="The Results"}
+```{r, echo=FALSE,out.width="48%",out.height="48%",fig.show='hold',fig.align='center', fig.cap="The Outcomes"}
 knitr::include_graphics(c("output/headtohead/Tommy_head_to_head.png","output/py_schedule/season_results_Tommy.png"))
 ```
-
-### Trick aka pbpablo
-:::::: {.cols data-latex=""}
-
-::: {.col data-latex="{0.6\textwidth}"}
-```{r, echo=FALSE}
-knitr::include_graphics("output/2023/dynasty_roster_Pdpablo.png")
-```
-:::
-
-::: {.col data-latex="{0.05\textwidth}"}
-\ 
-<!-- an empty Div (with a white space), serving as
-a column separator -->
-:::
-
-::: {.col data-latex="{0.35\textwidth}"}
-The figure on the left-hand side shows the `power_ranking` data.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscin 
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-:::
-::::::
-
-<p style="text-align: center;">**2022 Player Statistics**</p>
-```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics("output/2022/dynasty_roster_Pdpablo.png")
+### pbpablo
+<p style="text-align: center;">**2023 Proj. & 2022 Final Rosters**</p>
+```{r, echo=FALSE,out.width="70%",out.height="70%",fig.show='hold',fig.align='center', fig.cap="The Ballers"}
+knitr::include_graphics(c("output/2023/dynasty_roster_Pdpablo.png","output/2022/dynasty_roster_Pdpablo.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
-```{r, echo=FALSE,out.width="50%",out.height="50%",fig.show='hold',fig.align='top', fig.cap="The Results"}
+```{r, echo=FALSE,out.width="48%",out.height="48%",fig.show='hold',fig.align='center', fig.cap="The Outcomes"}
 knitr::include_graphics(c("output/headtohead/Patrick_head_to_head.png","output/py_schedule/season_results_Patrick.png"))
 ```
-
 ### slobonmynoblin (RIP)
-:::::: {.cols data-latex=""}
-
-::: {.col data-latex="{0.6\textwidth}"}
-```{r, echo=FALSE}
-knitr::include_graphics("output/2023/dynasty_roster_Slobonmynoblin.png")
-```
-:::
-
-::: {.col data-latex="{0.05\textwidth}"}
-\ 
-<!-- an empty Div (with a white space), serving as
-a column separator -->
-:::
-
-::: {.col data-latex="{0.35\textwidth}"}
-The figure on the left-hand side shows the `power_ranking` data.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscin 
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-enim ad minim veniam, quis nostrud exercitation ullamco laboris
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-nulla pariatur. 
-
-:::
-::::::
-
-<p style="text-align: center;">**2022 Player Statistics**</p>
-```{r, echo=FALSE,out.width="75%",out.height="75%",fig.show='hold',fig.align='top', fig.cap="The Players"}
-knitr::include_graphics("output/2022/dynasty_roster_Slobonmynoblin.png")
+<p style="text-align: center;">**2023 Proj. & 2022 Final Rosters**</p>
+```{r, echo=FALSE,out.width="70%",out.height="70%",fig.show='hold',fig.align='center', fig.cap="The Ballers"}
+knitr::include_graphics(c("output/2023/dynasty_roster_Slobonmynoblin.png","output/2022/dynasty_roster_Slobonmynoblin.png"))
 ```
 \newpage
 <p style="text-align: center;">**2022 Schedule & Career Head to Head**</p>
-```{r, echo=FALSE,out.width="50%",out.height="50%",fig.show='hold',fig.align='top', fig.cap="The Results"}
+```{r, echo=FALSE,out.width="48%",out.height="48%",fig.show='hold',fig.align='center', fig.cap="The Outcomes"}
 knitr::include_graphics(c("output/headtohead/Logan_head_to_head.png","output/py_schedule/season_results_Logan.png"))
 ```
