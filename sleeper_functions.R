@@ -346,7 +346,7 @@ team_dynasty_rosters <- team_dynasty |>
 # TEAM ROSTER IMAGES --------------------
 
 team_dynasty_rosters_df <- team_dynasty_rosters %>%
-  select(headshot, user_name, name, team, pos, fp_tier, fp_rank, fp_ecr, playerprofiler = career_value, dynastypros = dynpros_value) %>%
+  select(headshot, user_name, name, team, pos, fp_tier, fp_rank, fp_ecr, playerprofiler = pp_lifetime, dynastypros = dp_value) %>%
   mutate(user_name = stri_trans_totitle(gsub(",", " ", user_name)))
 
 gt_theme_pff <- function(data, ...) {
@@ -1260,15 +1260,6 @@ for (name in user_names) {
 
 ##### TRADES
 
-trades <- ff_transactions(conn, week = 1:17, ...)
-
-season_details <- list(
-  list(conn = conn1, weeks = 1:17, season = 2020),
-  list(conn = conn2, weeks = 1:18, season = 2021),
-  list(conn = conn3, weeks = 1:18, season = 2022),
-  list(conn = conn4, weeks = 1:18, season = 2023)
-)
-
 trades1 <- ff_transactions(conn1, weeks = 1:17) |>
   filter(type == "trade") |>
   select(-waiver_priority)
@@ -1303,39 +1294,44 @@ trades$player_name  <- gsub("_", " ", trades$player_name ) # Replace underscores
 
 
 trades <- trades |>
-  mutate(pos = replace_na(pos, "Pick"))
+  mutate(pos = replace_na(pos, "Pick")) |>
+  mutate(franchise_id = as.integer(franchise_id)) |>
+  mutate(trade_partner = as.integer(trade_partner))
 
-traded_away <- filter(trades, type_desc == "traded_away")
 
 # Assuming your data frame is named trades_df
 traded_away <- filter(trades, type_desc == "traded_away") |>
-  select(season, timestamp, franchise_id, franchise_name, player_name, pos, trade_partner)
+  mutate(trade_id = paste(season, format(timestamp, "%Y-%m-%d"), franchise_id, trade_partner, sep = "_")) |>
+  select(trade_id, season, timestamp, team_1 = franchise_id, team_1_name = franchise_name, traded_away = player_name, traded_away_pos = pos, trade_partner_1 = trade_partner) |>
+  group_by(trade_id) %>%
+  summarise(players_traded_away = toString(traded_away), .groups = 'drop') 
+
 traded_for <- filter(trades, type_desc == "traded_for") |>
-  select(season, timestamp,franchise_id, franchise_name,player_name, pos, trade_partner)
+  mutate(trade_id = paste(season, format(timestamp, "%Y-%m-%d"), franchise_id, trade_partner, sep = "_")) |>
+  select(trade_id, season, timestamp, team_2 = franchise_id, team_2_name = franchise_name, traded_for = player_name, traded_for_pos = pos, trade_partner_2= trade_partner) |>
+  group_by(trade_id) %>%
+  summarise(players_traded_for = toString(traded_for), .groups = 'drop') 
+
+trades_combined <- traded_away %>%
+  left_join(traded_for, by = "trade_id")
 
 
-traded_away_agg <- traded_away %>%
-  group_by(timestamp, franchise_id, trade_partner, season) %>%
-  summarise(players_traded_away = toString(player_name), pos = toString(pos), .groups = 'drop') |>
+trade_df <- readxl::read_excel('trades.xlsx')
+
+trades_final <- trades_combined %>%
+  separate(trade_id, into = c("season", "date", "franchise_id", "trade_partner"), sep = "_") |>
+  mutate(
+    franchise_id = as.integer(franchise_id),
+    trade_partner = as.integer(trade_partner),
+    season = as.double(season)) |>
   left_join(franchise_short, by = "franchise_id") |>
-  left_join(franchise_short, by = c("trade_partner" = "franchise_id"))
-
-traded_for_agg <- traded_for |>
-  group_by(timestamp, franchise_id, trade_partner, season) %>%
-  summarise(players_traded_for = toString(player_name), pos = toString(pos), .groups = 'drop') |>
+  left_join(trade_df, by = c("season", "date")) |>
   left_join(franchise_short, by = "franchise_id") |>
-  left_join(franchise_short, by = c("trade_partner" = "franchise_id"))
-
-trades_combined <- traded_away_agg %>%
-  left_join(traded_for_agg, by = c("timestamp", "franchise_id" = "trade_partner", "trade_partner" = "franchise_id", "season")) |>
-  mutate(timestamp = format(timestamp, "%m/%d/%y")) 
+  left_join(franchise_short, by = c("trade_partner" = "franchise_id")) |>
+  select(season, date, team = user_name, received = players_traded_away.x, partner = user_name.y, gave_up = players_traded_for.x) |>
+  distinct(date, .keep_all = TRUE)
 
 
-trade_history <- trades_combined |>
-  select(season,date = timestamp, team = user_name.x.x, team_trade_partner = user_name.y.y, players_traded_away, players_traded_away_pos = pos.x, players_traded_for, players_traded_for_pos = pos.y)
+library(writexl)
 
-trade_history <- trade_history |>
-  rename(players_traded_away_pos = pos.x,
-         players_traded_for_pos = pos.y)
-
-rm(trades_combined,traded_away_agg,traded_for_agg,traded_away,traded_for,trades)
+write_xlsx(trades_final, 'trades_final.xlsx')
