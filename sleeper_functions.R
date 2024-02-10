@@ -289,28 +289,26 @@ starters4$season <- 2023
 starters4$franchise_id <- as.integer(starters4$franchise_id)
 
 dp <- dp_values("values-players.csv") |>
-  select(fp_id,player:team,age,value_1qb) |>
-  rename(dynpros_value = value_1qb)
+  select(fp_id,player:age,ecr_1qb,value_1qb) |>
+  rename(
+    dp_value = value_1qb,
+    dp_ecr = ecr_1qb)
+
+dp_draft <- dp_values("values-picks.csv") |>
+  select(draftpick = player, pick, ecr_1qb)
 
 ffpros <- ffpros::fp_rankings("dynasty-overall") |>
   rename(fp_id = fantasypros_id) |>
-  select(fp_id:team, age, bye = player_bye_week, fp_rank = rank, fp_ecr = ecr, headshot = player_image_url, fp_posrank = pos_rank, fp_tier = tier) |>
-  left_join(dp, by = c("fp_id" = "fp_id", "player_name" = 'player', "pos" = "pos")) |>
-  relocate(headshot, .after = last_col())
-
-ffpros$player_age <- ifelse(is.na(ffpros$age.y), ffpros$age.x, ffpros$age.y) 
-
-ffpros <- ffpros |> 
-  rename(team = team.x) |>
-  select(-team.y, -age.x, -age.y) |>
-  rename(age = player_age) |>
-  relocate(age, .after = 2)
+  select(fp_id:team, fp_rank = rank, fp_ecr = ecr, headshot = player_image_url, fp_posrank = pos_rank, fp_tier = tier) |>
+  left_join(dp, by = c("fp_id" = "fp_id", "team" = "team", "pos")) |>
+  relocate(headshot, .after = last_col()) |>
+  select(fp_id:team, age, fp_rank:fp_tier, dp_ecr:dp_value, headshot)
   
 
 ffpros$team <- gsub("JAC", "JAX", ffpros$team)
 ffpros$player_name <- gsub("Kenneth Walker Iii", "Kenneth Walker", ffpros$player_name)
 ffpros$player_name <- gsub("Kenneth Walker III", "Kenneth Walker", ffpros$player_name)
-
+id <- dp_playerids()
 id_map <- dp_playerids() |>
   select(fp_id = fantasypros_id, name, sleeper_id) |>
   mutate(name = stri_trans_totitle(gsub(",", " ", name)))
@@ -320,32 +318,30 @@ id_map$name <- gsub("Kenneth Walker III", "Kenneth Walker", id_map$name)
 
 team_dynasty <- starters4 |>
   left_join(id_map, by = c("player_id" = "sleeper_id")) |>
-  select(-player_name) |>
-  filter(pos != "DEF" & pos != "K") |>
-  left_join(ffpros, by = c("fp_id"))
-
-team_dynasty$team.x <- ifelse(is.na(team_dynasty$team.x), team_dynasty$team.y, team_dynasty$team.x)
-
-team_dynasty <- team_dynasty |>
-  select(-pos.y, -team.y, -age.y) |>
-  select(franchise_id,fp_id,season,name,team = team.x,age=age.x,pos=pos.x,bye,fp_tier,fp_rank,fp_ecr,dynpros_value,fp_posrank,headshot) |>
-  arrange(fp_tier, -dynpros_value) |>
+  filter(pos != "DEF" & pos != "K")  |>
+  relocate(fp_id) |>
+  left_join(ffpros, by = c("fp_id")) |>
+  select(franchise_id, fp_id, player_id, player_name = player_name.x, name = player_name.y, age = age.x, pos = pos.x, team = team.x, fp_rank:headshot) |>
+  arrange(fp_tier, -dp_value) |>
   left_join(franchise_short, by = c("franchise_id" = "franchise_id")) |>
-  relocate(user_name, .before = 2) |>
-  mutate(name = stri_trans_totitle(gsub(",", " ", name)))
+  relocate(user_name, .before = 2) 
+
+team_dynasty$name <- ifelse(is.na(team_dynasty$name), team_dynasty$player_name, team_dynasty$name)
+team_dynasty$player_name <- ifelse(is.na(team_dynasty$player_name), team_dynasty$name, team_dynasty$player_name)
+
 
 playerprofiler <- read.csv('~/Desktop/fantasy-report/csv/playerprofiler.csv') |>
-  select(name = Full.Name, team = Team.Abbrev, pos_rank_pp = Positional.Rank,  career_value = Lifetime.Value) |>
-  mutate(name = stri_trans_totitle(gsub(",", " ", name)))
+  select(name = Full.Name, team = Team.Abbrev, pp_posrank = Positional.Rank,  pp_lifetime = Lifetime.Value)
 
 playerprofiler$name <- gsub("Kenneth Walker Iii", "Kenneth Walker", playerprofiler$name)
 playerprofiler$name <- gsub("Kenneth Walker III", "Kenneth Walker", playerprofiler$name)
 
 team_dynasty_rosters <- team_dynasty |>
-  left_join(playerprofiler, by = c("name" = "name")) |>
-  select(franchise_id:fp_posrank,career_value,headshot) |>
-  arrange(franchise_id, fp_tier, -dynpros_value)|>
-  rename(team = team.x)
+  left_join(playerprofiler, by = c("player_name" = "name")) |>
+  select(franchise_id:pos,team = team.x,fp_tier,fp_posrank,pp_posrank,pp_lifetime,fp_rank:fp_ecr,dp_ecr:dp_value,headshot) |>
+  mutate(season = "2023") |>
+  arrange(franchise_id, fp_tier, -pp_lifetime)
+
 
 # TEAM ROSTER IMAGES --------------------
 
@@ -736,7 +732,8 @@ gt_theme_schedule <- function(data,...) {
       font = list(
         google_font("Bebas Neue"),
         default_fonts()
-      )
+      ),
+      weight = "normal"
     ) %>%
     tab_style(
       style = cell_borders(
@@ -979,7 +976,7 @@ gt_theme_schedule <- function(data,...) {
       column_labels.border.bottom.color = "#585d73",
       row_group.font.size = px(14),
       row.striping.background_color = "#585d73",
-      data_row.padding= px(2),
+      data_row.padding= px(3),
       ...
     ) 
 } 
@@ -1193,3 +1190,152 @@ draft_history <- draftday |>
   arrange(year, round, pick_no)
 
 rm(draftday,drafts_combined,franchise_draft)
+
+
+##### Draft Picks
+
+draft_assets <- ff_draftpicks(platform = "sleeper", conn4)
+
+
+draft_assets_transformed <- draft_assets %>%
+  mutate(player_name = paste("Draft Pick:", round),
+         pos = "PICK", # Indicate draft pick
+         age = NA, # No age for draft picks
+         fp_posrank = NA,
+         pp_lifetime = NA) %>% # No FP rank for draft picks
+  select(franchise_id, season, player_name, pos, age, fp_posrank, pp_lifetime)
+  
+
+
+# Assuming the current season for team_dynasty_rosters is 2023
+team_dynasty_simplified <- team_dynasty_rosters %>%
+  select(franchise_id, season, player_name, pos, age, fp_posrank, pp_lifetime)
+
+team_dynasty_simplified <- team_dynasty_simplified |>
+  mutate(pos = factor(pos, levels = c("QB", "RB", "WR", "TE"))) %>%
+  arrange(franchise_id, pos, -pp_lifetime)
+
+full_roster_with_draft_picks <- bind_rows(team_dynasty_simplified, draft_assets_transformed) |>
+  left_join(franchise_short, by = "franchise_id") |>
+  select(user_name, season:pp_lifetime)
+
+user_names <- unique(franchise_short$user_name)
+
+for (name in user_names) {
+  
+  sysfonts::font_add_google("Bebas Neue", "Bebas Neue")
+  showtext_auto()
+  
+  # Filter the data for the current franchise_id
+  team_data <- full_roster_with_draft_picks %>%
+    filter(user_name == name)
+  
+  # Create and display a gt table for the current team
+  team_data %>%
+  
+    gt() %>%
+    tab_header(title = paste("2024 Full Roster with Draft Assets -:", name),
+                             subtitle = "FP Rank: FantasyPros, Career Value: PlayerProfiler") %>%
+    cols_label(
+      player_name = "Player/Draft Pick",
+      pos = "Position",
+      age = "Age",
+      fp_posrank = "Pos Rank",
+      pp_lifetime = "Career Value"
+    ) %>%
+    sub_missing(columns = 5:7, 
+                      missing_text = "-") %>%
+    cols_hide(columns = vars(user_name, season)) %>%
+    tab_options(
+      table.font.names = "Bebas Neue"
+    ) %>%
+    cols_align(align = "right", columns = player_name) %>% # Right-align the first column
+    cols_align(align = "center", columns = 2:7) %>%
+    gt_theme_schedule() %>%
+    gtsave(filename = paste("output/2024/Franchise_Assets_", name, ".png")) # Saving the table as an HTML file
+  
+  cat("\n") # Add a newline for better separation when displaying multiple tables
+}
+
+
+##### TRADES
+
+trades <- ff_transactions(conn, week = 1:17, ...)
+
+season_details <- list(
+  list(conn = conn1, weeks = 1:17, season = 2020),
+  list(conn = conn2, weeks = 1:18, season = 2021),
+  list(conn = conn3, weeks = 1:18, season = 2022),
+  list(conn = conn4, weeks = 1:18, season = 2023)
+)
+
+trades1 <- ff_transactions(conn1, weeks = 1:17) |>
+  filter(type == "trade") |>
+  select(-waiver_priority)
+trades1$season <- 2020
+
+trades2 <- ff_transactions(conn2, weeks = 1:18) |>
+  filter(type == "trade")
+trades2$season <- 2021
+
+trades3 <- ff_transactions(conn3,weeks = 1:18) |>
+  filter(type == "trade") |>
+  select(-waiver_priority)
+trades3$season <- 2022
+
+trades4 <- ff_transactions(conn4,weeks = 1:18) |>
+  filter(type == "trade") |>
+  select(-waiver_priority)
+trades4$season <- 2023
+trades <- rbind(trades1,trades2,trades3,trades4)
+
+trades <- trades |>
+  mutate(franchise_id = as.integer(franchise_id),
+         trade_partner = as.integer(trade_partner))
+
+rm(trades1,trades2,trades3,trades4)
+
+
+trades$player_name <- ifelse(is.na(trades$player_name), trades$player_id, trades$player_name)
+
+trades$player_name <- gsub("_pick_from_franchise_[0-9]+", "", trades$player_name) # Remove the pick part
+trades$player_name  <- gsub("_", " ", trades$player_name ) # Replace underscores with spaces
+
+
+trades <- trades |>
+  mutate(pos = replace_na(pos, "Pick"))
+
+traded_away <- filter(trades, type_desc == "traded_away")
+
+# Assuming your data frame is named trades_df
+traded_away <- filter(trades, type_desc == "traded_away") |>
+  select(season, timestamp, franchise_id, franchise_name, player_name, pos, trade_partner)
+traded_for <- filter(trades, type_desc == "traded_for") |>
+  select(season, timestamp,franchise_id, franchise_name,player_name, pos, trade_partner)
+
+
+traded_away_agg <- traded_away %>%
+  group_by(timestamp, franchise_id, trade_partner, season) %>%
+  summarise(players_traded_away = toString(player_name), pos = toString(pos), .groups = 'drop') |>
+  left_join(franchise_short, by = "franchise_id") |>
+  left_join(franchise_short, by = c("trade_partner" = "franchise_id"))
+
+traded_for_agg <- traded_for |>
+  group_by(timestamp, franchise_id, trade_partner, season) %>%
+  summarise(players_traded_for = toString(player_name), pos = toString(pos), .groups = 'drop') |>
+  left_join(franchise_short, by = "franchise_id") |>
+  left_join(franchise_short, by = c("trade_partner" = "franchise_id"))
+
+trades_combined <- traded_away_agg %>%
+  left_join(traded_for_agg, by = c("timestamp", "franchise_id" = "trade_partner", "trade_partner" = "franchise_id", "season")) |>
+  mutate(timestamp = format(timestamp, "%m/%d/%y")) 
+
+
+trade_history <- trades_combined |>
+  select(season,date = timestamp, team = user_name.x.x, team_trade_partner = user_name.y.y, players_traded_away, players_traded_away_pos = pos.x, players_traded_for, players_traded_for_pos = pos.y)
+
+trade_history <- trade_history |>
+  rename(players_traded_away_pos = pos.x,
+         players_traded_for_pos = pos.y)
+
+rm(trades_combined,traded_away_agg,traded_for_agg,traded_away,traded_for,trades)
