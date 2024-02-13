@@ -45,9 +45,9 @@ season,date,team_name,trade_partner,players_traded_away,players_traded_for
 2021,04/01/21,Tommy,Tom,"Justin Jefferson, Marquise Brown, 2021 round 2, 2021 round 2, 2022 round 1, 2022 round 4, 2021 round 2","Tyler Johnson, Bryan Edwards, DJ Moore, 2022 round 2, 2022 round 3, 2021 round 1"
 2021,04/03/21,Conor,Tom,"Courtland Sutton, 2021 round 1","Dallas Goedert, Tarik Cohen, Marvin Jones, 2021 round 5, 2021 round 2, 2021 round 2, 2021 round 2"
 2021,04/03/21,Tom,Conor,"Dallas Goedert, Tarik Cohen, Marvin Jones, 2021 round 5, 2021 round 2, 2021 round 2, 2021 round 2","Courtland Sutton, 2021 round 1"
-2021,04/10/21,Conor,NA,"Damien Harris, 2021 round 2, 2022 round 4","Julio Jones, Van Jefferson, Kerryon Johnson"
-2021,04/10/21,Logan,NA,"Julio Jones, 2021 round 1, 2021 round 2","Damien Harris, Courtland Sutton, 2021 round 2, 2022 round 4"
-2021,04/10/21,Tom,NA,"Van Jefferson, Kerryon Johnson, Courtland Sutton","2021 round 1, 2021 round 2"
+2021,04/10/21,Conor,Logan,"Damien Harris, 2021 round 2, 2022 round 4","Julio Jones, Van Jefferson, Kerryon Johnson"
+2021,04/10/21,Logan,Logan,"Julio Jones, 2021 round 1, 2021 round 2","Damien Harris, Courtland Sutton, 2021 round 2, 2022 round 4"
+2021,04/10/21,Tom,Logan,"Van Jefferson, Kerryon Johnson, Courtland Sutton","2021 round 1, 2021 round 2"
 2021,08/01/21,Montel,Tom,"Clyde Edwards-Helaire, Michael Gallup",CeeDee Lamb
 2021,08/01/21,Tom,Montel,CeeDee Lamb,"Clyde Edwards-Helaire, Michael Gallup"
 2021,08/05/21,Aviel,Tom,Tyler Higbee,2021 round 2
