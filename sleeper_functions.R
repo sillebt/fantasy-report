@@ -2,7 +2,6 @@
 library(dplyr)
 library(tidyverse)
 library(nflverse)
-library(devtools)
 library(ffscrapr)
 library(sleeperapi)
 library(stringi)
@@ -12,10 +11,6 @@ library(scales)
 library(gt)
 library(gtExtras)
 library(lamisc)
-library(htmltools)
-library(webshot)
-library(magick)
-library(httr)
 library(showtext)
 library(sysfonts)
 library(tvthemes)
@@ -83,7 +78,7 @@ rm(scoring1,scoring2,scoring3,scoring4,starters_scoring)
 
 starters_team <- unique(starters$franchise_name)
 
-# Franchise Organization --------------------------------------------
+# FRANCHISES  --------------------------------------------
 franchise1 <- ff_franchises(conn1)
 franchise1$season <- 2020
 franchise2 <- ff_franchises(conn2)
@@ -97,8 +92,8 @@ franchises <- rbind(franchise1,franchise2,franchise3,franchise4)
 rm(franchise1,franchise2,franchise3,franchise4)
 
 franchise_short <- franchises |>
-  select(franchise_id, user_name) |>
-  head(12)
+  select(franchise_id, user_name, franchise_name, user_id) |>
+  distinct(user_id, .keep_all = TRUE) 
 
 
 
@@ -257,7 +252,7 @@ generate_standings <- function(data, season_filter, title, subtitle, filename, s
   gtsave(standings, paste0('output/history/', filename))
 }
 
-# Season-specific standings
+#### Season-specific standings
 seasons <- list(
   list(season = 2020, title = "**2020 Final Standings**", subtitle = "**Nicks Chubb's Golden Taint**", filename = "2020_standings.png", special_tm = "Hosta"),
   list(season = 2021, title = "**2021 Final Standings**", subtitle = "**Iron Banki Claims His Throne**", filename = "2021_standings.png", special_tm = "Naad"),
@@ -316,17 +311,48 @@ id_map <- dp_playerids() |>
 id_map$name <- gsub("Kenneth Walker Iii", "Kenneth Walker", id_map$name)
 id_map$name <- gsub("Kenneth Walker III", "Kenneth Walker", id_map$name)
 
+franchises_dynasty <- franchises |>
+  select(season, user_id, franchise_id, franchise_name, user_name) |>
+  distinct(season, user_id, .keep_all = TRUE)
+franchises_team_dynasty <- franchises_dynasty |>
+  select(season, franchise_id, user_name)
+
 team_dynasty <- starters4 |>
   left_join(id_map, by = c("player_id" = "sleeper_id")) |>
   filter(pos != "DEF" & pos != "K")  |>
   relocate(fp_id) |>
   left_join(ffpros, by = c("fp_id")) |>
-  select(franchise_id, fp_id, player_id, player_name = player_name.x, name = player_name.y, age = age.x, pos = pos.x, team = team.x, fp_rank:headshot) |>
+  select(season, franchise_id, fp_id, player_id, player_name = player_name.x, name = player_name.y, age = age.x, pos = pos.x, team = team.x, fp_rank:headshot) |>
   arrange(fp_tier, -dp_value) |>
-  left_join(franchise_short, by = c("franchise_id" = "franchise_id")) |>
+  left_join(franchises_team_dynasty, by = c("season" = "season", "franchise_id" = "franchise_id")) |>
   relocate(user_name, .before = 2) 
 
-team_dynasty$name <- ifelse(is.na(team_dynasty$name), team_dynasty$player_name, team_dynasty$name)
+
+lookup_2 <- c("nhosta" = "Hosta",
+            "bellist" = "Tom",
+            "tbellis" = "Tom",
+            "pdpablo" = "Patrick",
+            "zacgeoffray" = "Zac",
+            "naaderbanki" = "Naad",
+            "ttsao" = "Tommy",
+            "elrandal" = "Randal",
+            "Alanasty" = "JP",
+            "JayPeeA" = "JP",
+            "JohnWickMD" = "Aviel",
+            "slobonmynoblin" = "Logan",
+            "asmontalvo" = "Montel",
+            "cpmadden1" = "Conor",
+            "patrickliou" = "Pat Liou")
+
+team_dynasty$team_name <- sapply(team_dynasty$user_name, function(x) {
+  if (x %in% names(lookup_2)) {
+    return(gsub(x, lookup[x], x))
+  } else {
+    return(x)
+  }
+})
+team_dynasty$team_name <- ifelse(is.na(team_dynasty$team_name), "JP", team_dynasty$team_name)
+team_dynasty$name <- ifelse(is.na(team_dynasty$team_name), team_dynasty$player_name, team_dynasty$name)
 team_dynasty$player_name <- ifelse(is.na(team_dynasty$player_name), team_dynasty$name, team_dynasty$player_name)
 
 
@@ -338,16 +364,15 @@ playerprofiler$name <- gsub("Kenneth Walker III", "Kenneth Walker", playerprofil
 
 team_dynasty_rosters <- team_dynasty |>
   left_join(playerprofiler, by = c("player_name" = "name")) |>
-  select(franchise_id:pos,team = team.x,fp_tier,fp_posrank,pp_posrank,pp_lifetime,fp_rank:fp_ecr,dp_ecr:dp_value,headshot) |>
+  select(team_name,franchise_id:pos,team = team.x,fp_tier,fp_posrank,pp_posrank,pp_lifetime,fp_rank:fp_ecr,dp_ecr:dp_value,headshot) |>
   mutate(season = "2023") |>
-  arrange(franchise_id, fp_tier, -pp_lifetime)
+  arrange(team_name, fp_tier, -pp_lifetime)
 
 
 # TEAM ROSTER IMAGES --------------------
 
 team_dynasty_rosters_df <- team_dynasty_rosters %>%
-  select(headshot, user_name, name, team, pos, fp_tier, fp_rank, fp_ecr, playerprofiler = pp_lifetime, dynastypros = dp_value) %>%
-  mutate(user_name = stri_trans_totitle(gsub(",", " ", user_name)))
+  select(headshot, team_name, name, team, pos, fp_tier, fp_rank, fp_ecr, playerprofiler = pp_lifetime, dynastypros = dp_value)
 
 gt_theme_pff <- function(data, ...) {
   data %>%
@@ -456,7 +481,7 @@ create_user_table <- function(user_name1) {
   
   # Filter data for the specific user_name
   user_data <- team_dynasty_rosters_df %>%
-    filter(user_name == user_name1) %>%
+    filter(team_name == user_name1) %>%
     arrange(pos, fp_rank) # arrange players by ECR
   
   # Define the number of players for each pos in the starting lineup
@@ -489,7 +514,7 @@ create_user_table <- function(user_name1) {
   
   # Create the gt table and apply filter
   gt_table <- lineup %>%
-    filter(user_name == user_name1) %>%
+    filter(team_name == user_name1) %>%
     group_by(roster) %>%
     select(headshot, name, team, pos, fp_tier, fp_rank, playerprofiler, dynastypros) %>%
     gt() %>%
@@ -507,7 +532,7 @@ create_user_table <- function(user_name1) {
 }
 
 # Get unique user_names
-unique_user_names <- unique(team_dynasty_rosters_df$user_name)
+unique_user_names <- unique(team_dynasty_rosters_df$team_name)
 
 
 # Loop through each user_name, create the table, and save it as PNG
@@ -518,7 +543,7 @@ for (user_name in unique_user_names) {
          paste0("output/2023/dynasty_roster_", user_name,".png"))
 }
 
-#  ROSTER IMAGES --------------------
+# ROSTER IMAGES --------------------
 df2 <- starters_final |>
   filter(season == 2022) |>
   left_join(franchise_short, by = c("franchise_id" = "franchise_id")) |>
@@ -693,7 +718,7 @@ historical_table <- function(user_name1) {
 }
 
 # Get unique user_names
-unique_user_names <- unique(data$user_name)
+unique_user_names <- unique(franchise_short$user_name)
 
 
 # Loop through each user_name, create the table, and save it as PNG
@@ -709,14 +734,15 @@ head2head <- full_schedule |>
   filter(season_type != "Consolation") |>
   mutate(margin = tm_score - opp_score) |>
   group_by(tm, opp) |>
-  summarize(games = length(win_loss),
-            wins = sum(result),
-            losses = games - wins,
-            winperc = percent(wins / games),
-            pf = sum(tm_score),
-            pa = sum(opp_score),
-            margin = sum(margin),
-            avg_mrg = margin / games) |>
+  mutate(
+    games = length(win_loss),
+    wins = sum(result),
+    losses = games - wins,
+    winperc = percent(wins / games),
+    pf = sum(tm_score),
+    pa = sum(opp_score),
+    margin = sum(margin),
+    avg_mrg = margin / games) |>
   ungroup()
 
 head2head$avg_mrg <- round(head2head$avg_mrg, 1)
@@ -805,7 +831,7 @@ for (tm in unique_tms) {
 }
 
 
-#  Schedule -------------------
+# SCHEDULES -------------------
 
 seasonrecap <- full_schedule |>
   filter(season_type != "Consolation") 
@@ -858,14 +884,14 @@ for (year in years) {
 
 
 
-# Blowouts ----------
+# BLOWOUTS  ----------
 blowouts <- full_schedule |>
   filter(season_type != "Consolation") |>
   mutate(margin = tm_score - opp_score) |>
   arrange(-margin) |>
   head(15)
 
-# Create the gt table and apply filter ----
+# GT TABLE ----
 gt_table <- blowouts %>%
   select(season, week, victor = tm, loser = opp, pf = tm_score, pa = opp_score, margin) %>%
   gt() %>%
@@ -886,7 +912,7 @@ gt_table <- blowouts %>%
 
 gtsave(gt_table,"output/history/blowouts.png")
 
-# Nail Biters ----------
+# NAIL BITERS ----------
 closecalls <- full_schedule |>
   filter(season_type != "Consolation") |>
   mutate(margin = tm_score - opp_score) |>
@@ -918,13 +944,13 @@ gtsave(gt_table,"output/history/closecalls.png")
 
 
 
-# Postseason Only Head to Head -------------
+# POSTSEASON H2H -------------
 
 head2head2 <- full_schedule |>
   filter(season_type == "Playoffs") |>
   mutate(margin = tm_score - opp_score) |>
   group_by(tm, opp) |>
-  summarize(games = length(win_loss),
+  mutate(games = length(win_loss),
             wins = sum(result),
             losses = games - wins,
             winperc = percent(wins / games),
@@ -1017,7 +1043,7 @@ for (tm in unique_tms) {
          paste0("output/headtohead/post/", tm, "_head_to_head.png"))
 }
 
-# Power Rankings by Season ---------
+# POWER RANKS ---------
 calculate_power_rankings <- function(season_data, season_year) {
   # Calculate power rankings
   power_rankings <- season_data %>%
@@ -1073,7 +1099,7 @@ for (season_year in season_years) {
   file_path <- paste0('output/history/power_rank_standings_yearly_', season_year, '.png')
   generate_and_save_table(power_rankings, season_year, file_path)
 }
-######## vs Median Score Each Week
+######## vs Median Score Each Week -------------
 library(gt)
 library(ggplot2)
 library(dplyr)
@@ -1138,12 +1164,12 @@ for (season in seasons) {
 }
 
 
-##### Draft History
+##### Draft History --------------
 
 franchise_draft <- franchises |>
   select(user_id, franchise_id) |>
-  distinct(user_id, franchise_id) |>
-  left_join(franchise_short, by = "franchise_id") |>
+  distinct(user_id, .keep_all = TRUE) |>
+  left_join(franchise_short, by = c("user_id", "franchise_id")) |>
   select(user_id, user_name)
 
 
@@ -1167,7 +1193,9 @@ for (i in seq_along(league_ids)) {
 }
 
 # Combine all drafts into a single data frame
-drafts_combined <- bind_rows(draft_list, .id = "league_id_key") |>
+drafts_combined <- dplyr::bind_rows(draft_list) 
+
+drafts_combined <- drafts_combined |>
   left_join(franchise_draft, by = c("picked_by" = "user_id"))
 
 
@@ -1258,7 +1286,7 @@ for (name in user_names) {
 }
 
 
-##### TRADES
+##### TRADES ---------------
 
 trades1 <- ff_transactions(conn1, weeks = 1:17) |>
   filter(type == "trade") |>
@@ -1284,8 +1312,6 @@ trades <- trades |>
   mutate(franchise_id = as.integer(franchise_id),
          trade_partner = as.integer(trade_partner))
 
-rm(trades1,trades2,trades3,trades4)
-
 
 trades$player_name <- ifelse(is.na(trades$player_name), trades$player_id, trades$player_name)
 
@@ -1296,42 +1322,239 @@ trades$player_name  <- gsub("_", " ", trades$player_name ) # Replace underscores
 trades <- trades |>
   mutate(pos = replace_na(pos, "Pick")) |>
   mutate(franchise_id = as.integer(franchise_id)) |>
-  mutate(trade_partner = as.integer(trade_partner))
+  mutate(trade_partner = as.integer(trade_partner)) 
+
 
 
 # Assuming your data frame is named trades_df
+traded_away_pre <- filter(trades, type_desc == "traded_away")
+traded_for_pre <- filter(trades, type_desc == "traded_for")
+
 traded_away <- filter(trades, type_desc == "traded_away") |>
-  mutate(trade_id = paste(season, format(timestamp, "%Y-%m-%d"), franchise_id, trade_partner, sep = "_")) |>
-  select(trade_id, season, timestamp, team_1 = franchise_id, team_1_name = franchise_name, traded_away = player_name, traded_away_pos = pos, trade_partner_1 = trade_partner) |>
-  group_by(trade_id) %>%
+  select(season, timestamp, team_1 = franchise_id, team_1_name = franchise_name, traded_away = player_name, traded_away_pos = pos, trade_partner_1 = trade_partner) |>
+  group_by(season, timestamp, team_1, trade_partner_1) %>%
   summarise(players_traded_away = toString(traded_away), .groups = 'drop') 
 
 traded_for <- filter(trades, type_desc == "traded_for") |>
-  mutate(trade_id = paste(season, format(timestamp, "%Y-%m-%d"), franchise_id, trade_partner, sep = "_")) |>
-  select(trade_id, season, timestamp, team_2 = franchise_id, team_2_name = franchise_name, traded_for = player_name, traded_for_pos = pos, trade_partner_2= trade_partner) |>
-  group_by(trade_id) %>%
+  select(season, timestamp, team_2 = franchise_id, team_2_name = franchise_name, traded_for = player_name, traded_for_pos = pos, trade_partner_2= trade_partner) |>
+  group_by(season, timestamp, team_2, trade_partner_2) %>%
   summarise(players_traded_for = toString(traded_for), .groups = 'drop') 
 
 trades_combined <- traded_away %>%
-  left_join(traded_for, by = "trade_id")
+  left_join(traded_for, by = c("season", "timestamp", "team_1" = 'team_2', "trade_partner_1" = "trade_partner_2")) |>
+  mutate(timestamp = format(timestamp, "%m/%d/%y"))
 
+
+write_xlsx(trades_combined, 'trades.xlsx')
 
 trade_df <- readxl::read_excel('trades.xlsx')
 
+trade_team_list <- franchises_team_dynasty |>
+  distinct(user_name, .keep_all = TRUE)
+
+trade_team_list$user_name <- sapply(trade_team_list$user_name, function(x) {
+  if (x %in% names(lookup_2)) {
+    return(gsub(x, lookup[x], x))
+  } else {
+    return(x)
+  }
+})
+
+
+# Your lookup vector
+lookup_3 <- c("8" = "Hosta",
+              "1" = "Tom",
+              "5" = "Patrick",
+              "10" = "Zac",
+              "9" = "Naad",
+              "3" = "Tommy",
+              "12" = "Randal",
+              "4" = "JP",
+              "6" = "Aviel",
+              "2" = "Montel",
+              "7" = "Conor")
+
+# Convert your lookup vector to a data frame for easier handling
+lookup_df <- data.frame(franchise_id = names(lookup_3), team_name = unname(lookup_3), stringsAsFactors = FALSE)
+lookup_df$franchise_id <- as.character(lookup_df$franchise_id) # Ensure the key column is of the same type
+lookup_df$season <- 2024
+
 trades_final <- trades_combined %>%
-  separate(trade_id, into = c("season", "date", "franchise_id", "trade_partner"), sep = "_") |>
   mutate(
-    franchise_id = as.integer(franchise_id),
-    trade_partner = as.integer(trade_partner),
+    franchise_id = as.integer(team_1),
+    trade_partner = as.integer(trade_partner_1),
     season = as.double(season)) |>
-  left_join(franchise_short, by = "franchise_id") |>
-  left_join(trade_df, by = c("season", "date")) |>
-  left_join(franchise_short, by = "franchise_id") |>
-  left_join(franchise_short, by = c("trade_partner" = "franchise_id")) |>
-  select(season, date, team = user_name, received = players_traded_away.x, partner = user_name.y, gave_up = players_traded_for.x) |>
-  distinct(date, .keep_all = TRUE)
+  select(season, date = timestamp, franchise_id, trade_partner, players_traded_away, players_traded_for)
+
+trade_df <- trades_final %>%
+  mutate(
+    franchise_id = as.character(franchise_id),
+    trade_partner = as.character(trade_partner))
 
 
-library(writexl)
 
-write_xlsx(trades_final, 'trades_final.xlsx')
+trade_df3 <- trade_df |>
+  left_join(lookup_df, by = c("franchise_id" = "franchise_id")) |>
+  left_join(lookup_df, by = c("trade_partner" = "franchise_id")) |>
+  select(season = season.x, date, franchise_id, team_name = team_name.x, trade_partner_id = trade_partner, trade_partner = team_name.y, players_traded_away,players_traded_for)
+
+# Assuming trade_df is your data frame
+trade_df4 <- trade_df3 %>%
+  mutate(
+    team_name = case_when(
+      season == 2020 & franchise_id == "11" ~ "Logan",
+      season == 2020 & is.na(franchise_id) ~ "Logan",
+      season == 2021 & franchise_id == "11" ~ "Logan",
+      season == 2021 & is.na(franchise_id) ~ "Logan",
+      season == 2022 & is.na(franchise_id) ~ "Logan",
+      season == 2022 & franchise_id == "11" ~ "Logan",
+      season == 2023 & franchise_id == "11" ~ "Pat L",
+      franchise_id == NA ~ "Logan",# Specify the condition and the new value
+      TRUE ~ team_name  # For all other cases, keep the original season value
+    )) |>
+      mutate(
+        trade_partner = case_when(
+          season == 2020 & trade_partner_id == "11" ~ "Logan",
+          season == 2020 & is.na(trade_partner_id) ~ "Logan",
+          season == 2021 & trade_partner_id == "11" ~ "Logan",
+          season == 2021 & is.na(trade_partner_id) ~ "Logan",
+          season == 2022 & is.na(trade_partner_id) ~ "Logan",
+          season == 2022 & trade_partner_id == "11" ~ "Logan",
+          season == 2023 & trade_partner_id == "11" ~ "Pat L",# Specify the condition and the new value
+          TRUE ~ trade_partner  # For all other cases, keep the original season value
+        )
+      ) |>
+  select(season, date, team_name, trade_partner, players_traded_away, players_traded_for) |>
+  arrange(season, date, team_name, trade_partner)
+
+unique_clubs <- unique(trade_df4$team_name)
+
+write_csv(trade_df4, 'trades_final.csv')
+
+# Assuming the necessary libraries are loaded
+library(dplyr)
+library(gt)
+library(googlefont)
+
+unique_clubs <- unique(trade_df4$team_name)
+
+generate_gt_trade <- function(club) {
+  # Filter the data for the specified club
+  gt_table <- trade_df4 %>%
+    filter(team_name == club) %>%
+    arrange(season, date)
+  
+  # Start building the gt table
+  gt_tbl <- gt_table |>
+    dplyr::select(season:team_name, team = trade_partner, received = players_traded_for, traded = players_traded_away) |>
+    gt() |>
+    cols_hide(columns = c(season, team_name)) |>
+    cols_width(
+      date ~ px(80),
+      team ~ px(60)) |>
+    opt_all_caps() |>
+    tab_header(
+      title = paste(club, "Trades by Season"),
+      subtitle = "2020 - 2023"
+    ) |>
+    tab_spanner(
+      label = "Trade Partner",
+      columns = c(date, team)
+    ) |>
+    tab_spanner(
+      label = "Details",
+      columns = c(received, traded)
+    )
+  
+  # Dynamically add row groups based on available seasons in the filtered data
+  for (year in c("2020", "2021", "2022", "2023")) {
+    if (year %in% gt_table$season) {
+      gt_tbl <- gt_tbl |>
+        tab_row_group(label = year, rows = season == year)
+    }
+  }
+  
+  # Continue with the rest of the gt table styling and options
+  gt_tbl <- gt_tbl |>
+    tab_style(
+      style = cell_text(align = "center", style = "normal", weight = "normal", stretch = "extra-condensed", transform = "uppercase"),
+      locations = cells_body(columns = c(received, traded))) |>
+    tab_style(
+      style = cell_text(align = "right", style = "normal", weight = "bold", stretch = "semi-expanded", transform = "uppercase"),
+      locations = cells_body(columns = c(date, team))) 
+    # Apply border styling separately
+  gt_tbl <- gt_tbl |>
+    tab_style(
+      style = cell_borders(c("top", "bottom"), color = "lightgrey", style = "solid", weight = px(1.5)),
+      locations = cells_body(columns = c(date, team, received, traded))
+    )
+  gt_tbl <- gt_tbl |>
+    tab_style(
+      style = cell_text(color = "#ffdc73", font = "Roboto", align = "center", style = "normal", weight = "bolder", stretch = "expanded", transform = "uppercase"),
+      locations = cells_column_spanners(spanners = everything())
+    ) |>
+    tab_style(
+      style = list(cell_fill(color = "#FEFEE7"), cell_text(color = "black", font = "Roboto", size = "large", style = "normal", weight = "bolder", stretch = "extra-expanded", transform = "uppercase")),
+      locations = cells_row_groups()
+    ) |>
+    tab_options(
+      table.align = "center",
+      heading.align = "center",
+      heading.background.color = "#ffdc73",
+      heading.title.font.size = px(20),
+      heading.title.font.weight = "bolder",
+      column_labels.font.size = px(16),
+      column_labels.font.weight = "bold",
+      column_labels.background.color = "#ffdc73",
+      table_body.hlines.color = "transparent",
+      table.border.top.width = px(2),
+      table.border.top.color = "transparent",
+      table.border.bottom.color = "transparent",
+      table.border.bottom.width = px(2),
+      column_labels.border.top.width = px(2),
+      column_labels.border.top.color = "transparent",
+      column_labels.border.bottom.width = px(2),
+      column_labels.border.bottom.color = "transparent"
+    ) |>
+    opt_table_font(font = list(google_font(name = "Roboto")))
+  
+  return(gt_tbl)
+}
+
+# Loop over each unique club and generate the gt table
+for (club in unique_clubs) {
+  p <- generate_gt_trade(club)
+  # Assuming the path exists and permissions are set correctly
+  gtsave(p, filename = paste0("output/history/Franchise_Trades_", club, ".png")) # Adjusted to correctly save the table
+}
+
+
+# OPTIMAL??? ============
+optimal_lineup_df <- do.call(rbind, optimal_lineups)
+
+lineup_optimal <- optimal_lineup_df |>
+  select(season, week, roster_version, franchise_id, franchise_name, player_name, pos, team, points, starter_status)
+
+lineup_analysis <- rbind(plyrscore_started, lineup_optimal) |>
+  arrange(season, week, franchise_id, roster_version)
+
+
+
+# Summing up points for started players
+started_points_summary <- plyrscore_started %>%
+  group_by(season, week, franchise_name) %>%
+  summarise(started_points_total = sum(points, na.rm = TRUE))
+
+# Summing up points for optimal lineup players
+optimal_points_summary <- lineup_optimal %>%
+  group_by(season, week, franchise_name) %>%
+  summarise(optimal_points_total = sum(points, na.rm = TRUE))
+
+# Calculating point difference
+point_diff_df <- left_join(started_points_summary, optimal_points_summary, 
+                           by = c("season", "week", "franchise_name")) %>%
+  mutate(point_diff = round(started_points_total - optimal_points_total, 2)) %>%
+  select(season, week, franchise_name, point_diff)
+
+# View the result
+print(point_diff_df)

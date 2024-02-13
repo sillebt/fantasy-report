@@ -1,0 +1,154 @@
+season,date,team_name,trade_partner,players_traded_away,players_traded_for
+2020,09/15/20,Logan,Tom,"Kyler Murray, 2022 round 3","Carson Wentz, 2021 round 2"
+2020,09/15/20,Tom,Logan,"Carson Wentz, 2021 round 2","Kyler Murray, 2022 round 3"
+2020,09/24/20,Conor,Tommy,2022 round 3,DeSean Jackson
+2020,09/24/20,Tommy,Conor,DeSean Jackson,2022 round 3
+2020,09/26/20,Conor,Tommy,"Dalton Schultz, 2021 round 3, bbid -244",Courtland Sutton
+2020,09/26/20,Tommy,Conor,Courtland Sutton,"Dalton Schultz, 2021 round 3, bbid 244"
+2020,09/27/20,Conor,JP,2023 round 1,Marlon Mack
+2020,09/27/20,JP,Conor,Marlon Mack,2023 round 1
+2020,09/30/20,Conor,Montel,Michael Gallup,Devin Singletary
+2020,09/30/20,Logan,Tommy,"Antonio Gibson, 2021 round 2",James Robinson
+2020,09/30/20,Montel,Conor,Devin Singletary,Michael Gallup
+2020,09/30/20,Tommy,Logan,James Robinson,"Antonio Gibson, 2021 round 2"
+2020,10/04/20,Tom,Tommy,"Russell Gage, 2023 round 3",Mike Davis
+2020,10/04/20,Tommy,Tom,Mike Davis,"Russell Gage, 2023 round 3"
+2020,10/06/20,Logan,Tom,DJ Moore,"Keelan Cole, James Conner, 2022 round 3"
+2020,10/06/20,Tom,Logan,"Keelan Cole, James Conner, 2022 round 3",DJ Moore
+2020,10/06/20,Tom,Zac,Eric Ebron,Mark Ingram
+2020,10/06/20,Zac,Tom,Mark Ingram,Eric Ebron
+2020,10/08/20,JP,Tom,2021 round 2,"Mike Davis, 2021 round 3"
+2020,10/08/20,Tom,JP,"Mike Davis, 2021 round 3",2021 round 2
+2020,10/09/20,Aviel,Tom,"Bryan Edwards, Van Jefferson, 2021 round 1","Darrynton Evans, A.J. Brown, 2022 round 3"
+2020,10/09/20,Tom,Aviel,"Darrynton Evans, A.J. Brown, 2022 round 3","Bryan Edwards, Van Jefferson, 2021 round 1"
+2020,10/11/20,Conor,Tommy,"Chase Edmonds, 2021 round 2","Joshua Kelley, Damien Harris"
+2020,10/11/20,Tommy,Conor,"Joshua Kelley, Damien Harris","Chase Edmonds, 2021 round 2"
+2020,10/18/20,Tommy,Zac,David Montgomery,2021 round 1
+2020,10/18/20,Zac,Tommy,2021 round 1,David Montgomery
+2020,10/21/20,Patrick,Tom,Darrel Williams,Drew Sample
+2020,10/21/20,Tom,Patrick,Drew Sample,Darrel Williams
+2020,11/01/20,JP,Zac,2021 round 1,Dak Prescott
+2020,11/01/20,Zac,JP,Dak Prescott,2021 round 1
+2020,11/12/20,Tom,Tommy,"Miles Sanders, Boston Scott","Jonathan Taylor, 2021 round 1, 2021 round 1, 2022 round 2"
+2020,11/12/20,Tommy,Tom,"Jonathan Taylor, 2021 round 1, 2021 round 1, 2022 round 2","Miles Sanders, Boston Scott"
+2020,11/14/20,Logan,Tom,"Tee Higgins, 2022 round 2","2021 round 1, 2023 round 1"
+2020,11/14/20,Tom,Logan,"2021 round 1, 2023 round 1","Tee Higgins, 2022 round 2"
+2020,11/16/20,JP,Tom,Kareem Hunt,"Brandon Aiyuk, 2021 round 1"
+2020,11/16/20,Tom,JP,"Brandon Aiyuk, 2021 round 1",Kareem Hunt
+2021,02/08/21,Montel,Tom,2021 round 3,"Matthew Stafford, 2021 round 4, 2022 round 2"
+2021,02/08/21,Tom,Montel,"Matthew Stafford, 2021 round 4, 2022 round 2",2021 round 3
+2021,03/22/21,Tom,Tommy,2021 round 3,Tony Pollard
+2021,03/22/21,Tommy,Tom,Tony Pollard,2021 round 3
+2021,03/23/21,Patrick,Tom,2022 round 3,"Darrynton Evans, 2022 round 4"
+2021,03/23/21,Tom,Patrick,"Darrynton Evans, 2022 round 4",2022 round 3
+2021,04/01/21,Tom,Tommy,"Tyler Johnson, Bryan Edwards, DJ Moore, 2022 round 2, 2022 round 3, 2021 round 1","Justin Jefferson, Marquise Brown, 2021 round 2, 2021 round 2, 2022 round 1, 2022 round 4, 2021 round 2"
+2021,04/01/21,Tommy,Tom,"Justin Jefferson, Marquise Brown, 2021 round 2, 2021 round 2, 2022 round 1, 2022 round 4, 2021 round 2","Tyler Johnson, Bryan Edwards, DJ Moore, 2022 round 2, 2022 round 3, 2021 round 1"
+2021,04/03/21,Conor,Tom,"Courtland Sutton, 2021 round 1","Dallas Goedert, Tarik Cohen, Marvin Jones, 2021 round 5, 2021 round 2, 2021 round 2, 2021 round 2"
+2021,04/03/21,Tom,Conor,"Dallas Goedert, Tarik Cohen, Marvin Jones, 2021 round 5, 2021 round 2, 2021 round 2, 2021 round 2","Courtland Sutton, 2021 round 1"
+2021,04/10/21,Conor,NA,"Damien Harris, 2021 round 2, 2022 round 4","Julio Jones, Van Jefferson, Kerryon Johnson"
+2021,04/10/21,Logan,NA,"Julio Jones, 2021 round 1, 2021 round 2","Damien Harris, Courtland Sutton, 2021 round 2, 2022 round 4"
+2021,04/10/21,Tom,NA,"Van Jefferson, Kerryon Johnson, Courtland Sutton","2021 round 1, 2021 round 2"
+2021,08/01/21,Montel,Tom,"Clyde Edwards-Helaire, Michael Gallup",CeeDee Lamb
+2021,08/01/21,Tom,Montel,CeeDee Lamb,"Clyde Edwards-Helaire, Michael Gallup"
+2021,08/05/21,Aviel,Tom,Tyler Higbee,2021 round 2
+2021,08/05/21,Conor,Tom,"Patrick Mahomes, 2021 round 2, 2021 round 2, 2022 round 5, 2023 round 5","Mark Ingram, Kyler Murray, Baker Mayfield, 2021 round 1, 2023 round 4, 2022 round 4"
+2021,08/05/21,Tom,Aviel,2021 round 2,Tyler Higbee
+2021,08/05/21,Tom,Conor,"Mark Ingram, Kyler Murray, Baker Mayfield, 2021 round 1, 2023 round 4, 2022 round 4","Patrick Mahomes, 2021 round 2, 2021 round 2, 2022 round 5, 2023 round 5"
+2021,09/09/21,Aviel,Naad,Logan Thomas,Tom Brady
+2021,09/09/21,JP,Tom,"Noah Gray, 2024 round 5",2024 round 5
+2021,09/09/21,Naad,Aviel,Tom Brady,Logan Thomas
+2021,09/09/21,Tom,JP,2024 round 5,"Noah Gray, 2024 round 5"
+2021,09/10/21,Naad,Tom,"Kenneth Gainwell, Tua Tagovailoa, Tyler Boyd","Mecole Hardman, Marquise Brown, Kareem Hunt, Devontae Booker, 2024 round 4"
+2021,09/10/21,Tom,Naad,"Mecole Hardman, Marquise Brown, Kareem Hunt, Devontae Booker, 2024 round 4","Kenneth Gainwell, Tua Tagovailoa, Tyler Boyd"
+2021,10/06/21,Aviel,Tom,2022 round 1,"Kenneth Gainwell, Tony Pollard, 2022 round 2"
+2021,10/06/21,Aviel,Tom,"Darrel Williams, 2024 round 5",2024 round 5
+2021,10/06/21,Tom,Aviel,"Kenneth Gainwell, Tony Pollard, 2022 round 2",2022 round 1
+2021,10/06/21,Tom,Aviel,2024 round 5,"Darrel Williams, 2024 round 5"
+2021,10/26/21,Conor,Tom,"2022 round 1, 2022 round 2, 2023 round 3",Travis Etienne
+2021,10/26/21,Tom,Conor,Travis Etienne,"2022 round 1, 2022 round 2, 2023 round 3"
+2021,11/02/21,Tom,Zac,Darrel Williams,2022 round 2
+2021,11/02/21,Zac,Tom,2022 round 2,Darrel Williams
+2021,11/30/21,Montel,Tom,Justin Fields,"Parris Campbell, 2022 round 1"
+2021,11/30/21,Tom,Montel,"Parris Campbell, 2022 round 1",Justin Fields
+2021,12/05/21,Logan,Tom,KC,"MIN, 2022 round 5, 2022 round 5, 2023 round 5"
+2021,12/05/21,Tom,Logan,"MIN, 2022 round 5, 2022 round 5, 2023 round 5",KC
+2022,01/14/22,Conor,Tom,Rashod Bateman,"Tyler Johnson, Michael Gallup, James White, 2023 round 3"
+2022,01/14/22,Tom,Conor,"Tyler Johnson, Michael Gallup, James White, 2023 round 3",Rashod Bateman
+2022,04/16/22,Tom,Tommy,Tyreek Hill,Antonio Gibson
+2022,04/16/22,Tommy,Tom,Antonio Gibson,Tyreek Hill
+2022,08/24/22,Hosta,Tom,2023 round 2,Tyler Boyd
+2022,08/24/22,Tom,Hosta,Tyler Boyd,2023 round 2
+2022,09/02/22,JP,Tom,"2022 round 2, 2022 round 4, 2023 round 3",2022 round 2
+2022,09/02/22,Tom,JP,2022 round 2,"2022 round 2, 2022 round 4, 2023 round 3"
+2022,09/03/22,Conor,Tom,"2023 round 4, 2023 round 4","Terrace Marshall, 2023 round 5"
+2022,09/03/22,Tom,Conor,"Terrace Marshall, 2023 round 5","2023 round 4, 2023 round 4"
+2022,09/22/22,Aviel,Montel,"Elijah Moore, Tony Pollard, 2023 round 1",Austin Ekeler
+2022,09/22/22,Montel,Aviel,Austin Ekeler,"Elijah Moore, Tony Pollard, 2023 round 1"
+2022,09/23/22,Montel,Tom,"Treylon Burks, 2023 round 2","J.K. Dobbins, 2023 round 4, 2023 round 3"
+2022,09/23/22,Tom,Montel,"J.K. Dobbins, 2023 round 4, 2023 round 3","Treylon Burks, 2023 round 2"
+2022,09/30/22,Aviel,Zac,Rex Burkhead,2023 round 3
+2022,09/30/22,Tom,Zac,"Clyde Edwards-Helaire, Tyler Higbee, 2023 round 2","Dawson Knox, 2023 round 1"
+2022,09/30/22,Zac,Aviel,2023 round 3,Rex Burkhead
+2022,09/30/22,Zac,Tom,"Dawson Knox, 2023 round 1","Clyde Edwards-Helaire, Tyler Higbee, 2023 round 2"
+2022,10/16/22,Aviel,Tom,"Marquez Valdes-Scantling, 2023 round 2",Deshaun Watson
+2022,10/16/22,Tom,Aviel,Deshaun Watson,"Marquez Valdes-Scantling, 2023 round 2"
+2022,10/24/22,Tom,Zac,"Tevin Coleman, 2023 round 1, 2023 round 2",Isiah Pacheco
+2022,10/24/22,Zac,Tom,Isiah Pacheco,"Tevin Coleman, 2023 round 1, 2023 round 2"
+2022,10/26/22,Conor,Tom,DeAndre Hopkins,"Eno Benjamin, 2023 round 2, 2023 round 4"
+2022,10/26/22,Tom,Conor,"Eno Benjamin, 2023 round 2, 2023 round 4",DeAndre Hopkins
+2022,11/02/22,Naad,Tom,2025 round 3,"Darnell Mooney, 2025 round 5"
+2022,11/02/22,Tom,Naad,"Darnell Mooney, 2025 round 5",2025 round 3
+2022,11/23/22,Aviel,Tom,"Rachaad White, 2023 round 3, 2024 round 1","Treylon Burks, Antonio Gibson, 2024 round 2"
+2022,11/23/22,JP,Patrick,Noah Fant,2023 round 2
+2022,11/23/22,Patrick,JP,2023 round 2,Noah Fant
+2022,11/23/22,Tom,Aviel,"Treylon Burks, Antonio Gibson, 2024 round 2","Rachaad White, 2023 round 3, 2024 round 1"
+2022,12/06/22,JP,Randal,Aaron Rodgers,Russell Wilson
+2022,12/06/22,Randal,JP,Russell Wilson,Aaron Rodgers
+2022,12/18/22,JP,Tom,DEN,2023 round 3
+2022,12/18/22,Tom,JP,2023 round 3,DEN
+2023,01/17/23,JP,Tom,2023 round 4,DEN
+2023,01/17/23,Tom,JP,DEN,2023 round 4
+2023,04/02/23,Tom,Tommy,2023 round 2,Kadarius Toney
+2023,04/02/23,Tommy,Tom,Kadarius Toney,2023 round 2
+2023,05/15/23,Montel,Tom,"2023 round 1, 2024 round 2, 2023 round 3",Jonathan Taylor
+2023,05/15/23,Tom,Montel,Jonathan Taylor,"2023 round 1, 2024 round 2, 2023 round 3"
+2023,08/02/23,Conor,Tom,"Travis Etienne, 2023 round 2","Brian Robinson, Jameson Williams, Rashod Bateman, 2024 round 1, 2023 round 3, 2023 round 4"
+2023,08/02/23,Tom,Conor,"Brian Robinson, Jameson Williams, Rashod Bateman, 2024 round 1, 2023 round 3, 2023 round 4","Travis Etienne, 2023 round 2"
+2023,08/04/23,Tom,Zac,DeAndre Hopkins,2023 round 2
+2023,08/04/23,Zac,Tom,2023 round 2,DeAndre Hopkins
+2023,08/27/23,Aviel,Tom,"2023 round 3, 2024 round 2","2023 round 2, 2025 round 3"
+2023,08/27/23,Tom,Aviel,"2023 round 2, 2025 round 3","2023 round 3, 2024 round 2"
+2023,09/02/23,JP,Randal,"2023 round 1, 2023 round 2, 2024 round 4","2023 round 1, 2023 round 4"
+2023,09/02/23,JP,Randal,2023 round 2,NA
+2023,09/02/23,Randal,JP,"2023 round 1, 2023 round 4","2023 round 1, 2023 round 2, 2024 round 4"
+2023,09/02/23,Randal,JP,2023 round 2,NA
+2023,09/05/23,Aviel,Conor,"Kenny Pickett, Alvin Kamara","Christian Kirk, Jared Goff"
+2023,09/05/23,Conor,Aviel,"Christian Kirk, Jared Goff","Kenny Pickett, Alvin Kamara"
+2023,10/01/23,JP,Naad,"Dameon Pierce, 2024 round 2","Lamar Jackson, Ezekiel Elliott"
+2023,10/01/23,JP,Randal,Dak Prescott,2024 round 2
+2023,10/01/23,Naad,JP,"Lamar Jackson, Ezekiel Elliott","Dameon Pierce, 2024 round 2"
+2023,10/01/23,Randal,JP,2024 round 2,Dak Prescott
+2023,10/02/23,Conor,Tom,Dallas Goedert,"Kadarius Toney, Cole Kmet"
+2023,10/02/23,Tom,Conor,"Kadarius Toney, Cole Kmet",Dallas Goedert
+2023,10/07/23,Montel,Tom,Odell Beckham,Dawson Knox
+2023,10/07/23,Tom,Montel,Dawson Knox,Odell Beckham
+2023,10/08/23,JP,Patrick,"George Pickens, Michael Carter, 2024 round 2, 2025 round 3","Elijah Mitchell, Derrick Henry"
+2023,10/08/23,Patrick,JP,"Elijah Mitchell, Derrick Henry","George Pickens, Michael Carter, 2024 round 2, 2025 round 3"
+2023,10/17/23,Aviel,Zac,Dalton Schultz,Joshua Palmer
+2023,10/17/23,Zac,Aviel,Joshua Palmer,Dalton Schultz
+2023,10/18/23,Aviel,Montel,Evan Engram,C.J. Stroud
+2023,10/18/23,Montel,Aviel,C.J. Stroud,Evan Engram
+2023,10/22/23,Aviel,Patrick,Treylon Burks,Chuba Hubbard
+2023,10/22/23,Patrick,Aviel,Chuba Hubbard,Treylon Burks
+2023,10/31/23,JP,Tom,Mike Evans,2024 round 2
+2023,10/31/23,Naad,Patrick,Christian Watson,"Gus Edwards, 2024 round 2"
+2023,10/31/23,Naad,Tom,"2024 round 4, 2025 round 1","Rachaad White, 2024 round 2"
+2023,10/31/23,Patrick,Naad,"Gus Edwards, 2024 round 2",Christian Watson
+2023,10/31/23,Tom,JP,2024 round 2,Mike Evans
+2023,10/31/23,Tom,Naad,"Rachaad White, 2024 round 2","2024 round 4, 2025 round 1"
+2023,11/11/23,Montel,Naad,CeeDee Lamb,"Nico Collins, Marquise Brown"
+2023,11/11/23,Naad,Montel,"Nico Collins, Marquise Brown",CeeDee Lamb
+2023,11/25/23,Aviel,Pat L,"Antonio Gibson, 2024 round 2","Courtland Sutton, 2024 round 4"
+2023,11/25/23,Pat L,Aviel,"Courtland Sutton, 2024 round 4","Antonio Gibson, 2024 round 2"
+2023,12/06/23,Aviel,Pat L,2025 round 1,Zack Moss
+2023,12/06/23,Pat L,Aviel,Zack Moss,2025 round 1
