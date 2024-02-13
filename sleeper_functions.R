@@ -1345,7 +1345,6 @@ trades_combined <- traded_away %>%
   mutate(timestamp = format(timestamp, "%m/%d/%y"))
 
 
-write_xlsx(trades_combined, 'trades.xlsx')
 
 trade_df <- readxl::read_excel('trades.xlsx')
 
@@ -1434,7 +1433,7 @@ write_csv(trade_df4, 'trades_final.csv')
 # Assuming the necessary libraries are loaded
 library(dplyr)
 library(gt)
-library(googlefont)
+
 
 unique_clubs <- unique(trade_df4$team_name)
 
@@ -1442,7 +1441,16 @@ generate_gt_trade <- function(club) {
   # Filter the data for the specified club
   gt_table <- trade_df4 %>%
     filter(team_name == club) %>%
-    arrange(season, date)
+    arrange(season, date) %>%
+    mutate(
+      players_traded_for = gsub(",", "<br>", players_traded_for, fixed = TRUE),
+      players_traded_away = gsub(",", "<br>", players_traded_away, fixed = TRUE)
+    )
+  
+  
+  # Import font from sysfonts
+  sysfonts::font_add_google("Bebas Neue", "Bebas Neue")
+  showtext_auto()
   
   # Start building the gt table
   gt_tbl <- gt_table |>
@@ -1451,19 +1459,11 @@ generate_gt_trade <- function(club) {
     cols_hide(columns = c(season, team_name)) |>
     cols_width(
       date ~ px(80),
-      team ~ px(60)) |>
+      team ~ px(80)) |>
     opt_all_caps() |>
     tab_header(
       title = paste(club, "Trades by Season"),
       subtitle = "2020 - 2023"
-    ) |>
-    tab_spanner(
-      label = "Trade Partner",
-      columns = c(date, team)
-    ) |>
-    tab_spanner(
-      label = "Details",
-      columns = c(received, traded)
     )
   
   # Dynamically add row groups based on available seasons in the filtered data
@@ -1474,13 +1474,17 @@ generate_gt_trade <- function(club) {
     }
   }
   
+  # Apply markdown formatting to allow line breaks
+  gt_tbl <- gt_tbl %>%
+    fmt_markdown(columns = vars(received, traded))
+  
   # Continue with the rest of the gt table styling and options
   gt_tbl <- gt_tbl |>
     tab_style(
       style = cell_text(align = "center", style = "normal", weight = "normal", stretch = "extra-condensed", transform = "uppercase"),
       locations = cells_body(columns = c(received, traded))) |>
     tab_style(
-      style = cell_text(align = "right", style = "normal", weight = "bold", stretch = "semi-expanded", transform = "uppercase"),
+      style = cell_text(align = "right", style = "normal", weight = "bold", stretch = "condensed", transform = "uppercase"),
       locations = cells_body(columns = c(date, team))) 
     # Apply border styling separately
   gt_tbl <- gt_tbl |>
@@ -1490,11 +1494,15 @@ generate_gt_trade <- function(club) {
     )
   gt_tbl <- gt_tbl |>
     tab_style(
-      style = cell_text(color = "#ffdc73", font = "Roboto", align = "center", style = "normal", weight = "bolder", stretch = "expanded", transform = "uppercase"),
-      locations = cells_column_spanners(spanners = everything())
+      style = cell_text(color = "black", align = "center", style = "normal", weight = "bolder", stretch = "extra-expanded", decorate = "underline", transform = "uppercase"),
+      locations = cells_title(c("title", "subtitle"))
     ) |>
     tab_style(
-      style = list(cell_fill(color = "#FEFEE7"), cell_text(color = "black", font = "Roboto", size = "large", style = "normal", weight = "bolder", stretch = "extra-expanded", transform = "uppercase")),
+      style = cell_text(color = "black", align = "center", style = "normal", weight = "bolder", stretch = "expanded", transform = "uppercase"),
+      locations = cells_column_labels(columns = everything())
+    ) |>
+    tab_style(
+      style = list(cell_fill(color = "#FEFEE7"), cell_text(color = "black", size = "medium", style = "normal", weight = "bolder", stretch = "extra-expanded", transform = "uppercase")),
       locations = cells_row_groups()
     ) |>
     tab_options(
@@ -1515,8 +1523,7 @@ generate_gt_trade <- function(club) {
       column_labels.border.top.color = "transparent",
       column_labels.border.bottom.width = px(2),
       column_labels.border.bottom.color = "transparent"
-    ) |>
-    opt_table_font(font = list(google_font(name = "Roboto")))
+    ) 
   
   return(gt_tbl)
 }
