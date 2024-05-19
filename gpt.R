@@ -8,7 +8,7 @@ library(jsonlite)
 
 
 # Get and Save Personal API
-my_API <- "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"
+my_API <- 
 # Loading Required Libraries
 library(stringr)
 library(httr)
