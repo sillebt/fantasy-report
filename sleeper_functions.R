@@ -14,7 +14,7 @@ library(lamisc)
 library(showtext)
 library(sysfonts)
 library(tvthemes)
-
+library(patchwork)
 # Connection --------------------------------------------------------------------
 conn1 = ff_connect(platform = "sleeper", league_id = 591530379404427264, season = 2020)
 conn2 = ff_connect(platform = "sleeper", league_id = 650064757319118848, season = 2021)
@@ -92,7 +92,7 @@ franchises <- rbind(franchise1,franchise2,franchise3,franchise4)
 rm(franchise1,franchise2,franchise3,franchise4)
 
 franchise_short <- franchises |>
-  select(franchise_id, user_name, franchise_name, user_id) |>
+  select(franchise_id, user_name, franchise_name, user_id, season) |>
   distinct(user_id, .keep_all = TRUE) 
 
 
@@ -208,6 +208,8 @@ rm(listofgames,schedule_2020_final,schedule_2021_final,schedule_2022_final,sched
    schedule2_1, schedule2_2, schedule2,
    schedule1_1, schedule1_2, schedule1)
 
+write_csv(full_schedule, 'fullschedule.csv')
+
 # STANDINGS ----------------
 
 # Define a function to generate standings
@@ -231,8 +233,8 @@ generate_standings <- function(data, season_filter, title, subtitle, filename, s
     summarize(
       wins = sum(result),
       games = n(),
-      pf = round(mean(tm_score), 0),
-      pa = round(mean(opp_score), 0),
+      pf = round(mean(tm_score), 1),
+      pa = round(mean(opp_score), 1),
       .groups = 'drop'
     ) |> 
     mutate(
@@ -330,7 +332,6 @@ team_dynasty <- starters4 |>
 
 lookup_2 <- c("nhosta" = "Hosta",
             "bellist" = "Tom",
-            "tbellis" = "Tom",
             "pdpablo" = "Patrick",
             "zacgeoffray" = "Zac",
             "naaderbanki" = "Naad",
@@ -383,7 +384,7 @@ gt_theme_pff <- function(data, ...) {
     ) %>%
     # add spanner for SNAPS
     tab_spanner(
-      label = "Dynasty Rank",
+      label = "Dynasty Value",
       columns = contains(c("playerprofiler", "dynastypros"))
     ) %>%
     # Add a "blank" spanner to add white space
@@ -406,20 +407,20 @@ gt_theme_pff <- function(data, ...) {
     # add exact color from PFF table to spanners
     tab_style(
       style = list(
-        cell_fill(color = "#585d73"),
+        cell_fill(color = "#585d93"),
         cell_text(color = "white"),
-        cell_borders(sides = "all", color = "#585d73", weight = px(1))
+        cell_borders(sides = "all", color = "#585d93", weight = px(1))
       ),
       locations = list(
         cells_column_spanners(
-          spanners = c("Season Rank", "Dynasty Rank")
+          spanners = c("BLANK", "Season Rank", "Dynasty Value")
         )
       )
     ) %>%
     # hide spanner with transparent color
     tab_style(
       style = list(
-        cell_fill(color = "transparent"),
+        cell_fill(color = "#585d93"),
         cell_text(color = "transparent")
       ),
       locations = list(
@@ -431,7 +432,7 @@ gt_theme_pff <- function(data, ...) {
     # Change font color and weight for numeric col
     tab_style(
       style = list(
-        cell_text(color = "#585d73", weight = "bold")
+        cell_text(color = "black", weight = "bold")
       ),
       locations = cells_body(
         columns = 1:9
@@ -443,8 +444,8 @@ gt_theme_pff <- function(data, ...) {
     opt_row_striping() %>%
     # change overall table styling for borders and striping
     tab_options(
-      column_labels.background.color = "#585d73",
-      column_labels.font.size = px(16),
+      column_labels.background.color = "#585d93",
+      column_labels.font.size = px(14),
       table_body.hlines.color = "transparent",
       table.border.top.width = px(2),
       table.border.top.color = "transparent",
@@ -455,15 +456,15 @@ gt_theme_pff <- function(data, ...) {
       column_labels.border.bottom.width = px(2),
       column_labels.border.bottom.color = "transparent",
       row_group.font.size = px(14),
-      row.striping.background_color = "#FFFDE9",
-      data_row.padding= px(3),
+      row.striping.background_color = "#ededed",
+      data_row.padding= px(4),
 
       ...
     ) %>% 
     # change font to Lato throughout (note no need to have Lato locally!)
     opt_table_font(
       font = c(
-        google_font(name = "Bebas Neue")
+        google_font(name = "Roboto")
       )
     ) %>%
     # add source note
@@ -472,10 +473,12 @@ gt_theme_pff <- function(data, ...) {
     )
 }
 
+showtext_auto()
+
 create_user_table <- function(user_name1) {
   
   # Import font from sysfonts
-  sysfonts::font_add_google("Bebas Neue", "Bebas Neue")
+  sysfonts::font_add_google("Roboto", "Roboto")
   showtext_auto()
   
   
@@ -506,7 +509,7 @@ create_user_table <- function(user_name1) {
     filter(!(name %in% starting_lineup$name)) %>%
     filter(!(name %in% flex_players$name)) %>%
     arrange(fp_rank) %>%
-    head(n = 10)
+    head(n = 12)
   
   bench$roster <- "Bench"
   
@@ -518,8 +521,7 @@ create_user_table <- function(user_name1) {
     group_by(roster) %>%
     select(headshot, name, team, pos, fp_tier, fp_rank, playerprofiler, dynastypros) %>%
     gt() %>%
-    tab_header(title = md("**2023 Dynasty Roster**"),
-               subtitle = "Ranked: FantasyPros ECR") %>%
+    tab_header(title = md("**2023 Dynasty Roster**")) %>%
     gt_img_rows(headshot) %>% 
     fmt_number(
       columns = 5:9,
@@ -540,7 +542,7 @@ for (user_name in unique_user_names) {
   gt_table <- create_user_table(user_name)
   
   gtsave(gt_table,
-         paste0("output/2023/dynasty_roster_", user_name,".png"))
+         paste0("output/2023/v2024/dynasty_roster_", user_name,".png"))
 }
 
 # ROSTER IMAGES --------------------
@@ -592,9 +594,9 @@ gt_theme_538 <- function(data,...) {
     # add exact color from PFF table to spanners
     tab_style(
       style = list(
-        cell_fill(color = "#585d73"),
+        cell_fill(color = "#585d93"),
         cell_text(color = "white"),
-        cell_borders(sides = "all", color = "#585d73", weight = px(1))
+        cell_borders(sides = "all", color = "#585d93", weight = px(1))
       ),
       locations = list(
         cells_column_spanners(
@@ -616,7 +618,7 @@ gt_theme_538 <- function(data,...) {
     # Change font color and weight for numeric col
     tab_style(
       style = list(
-        cell_text(color = "#585d73", weight = "bold")
+        cell_text(color = "#585d93", weight = "bold")
       ),
       locations = cells_body(
         columns = 1:7
@@ -628,7 +630,7 @@ gt_theme_538 <- function(data,...) {
     opt_row_striping() %>%
     # change overall table styling for borders and striping
     tab_options(
-      column_labels.background.color = "#585d73",
+      column_labels.background.color = "#585d93",
       column_labels.font.size = px(16),
       table_body.hlines.color = "transparent",
       table.border.top.width = px(2),
@@ -763,7 +765,7 @@ gt_theme_schedule <- function(data,...) {
     ) %>%
     tab_style(
       style = cell_borders(
-        sides = "all", color = "#585d73", weight = px(2)
+        sides = "all", color = "#585d93", weight = px(2)
       ),
       locations = cells_body(
         columns = everything(),
@@ -772,23 +774,23 @@ gt_theme_schedule <- function(data,...) {
     ) %>% 
     # change overall table styling for borders and striping
     tab_options(
-      column_labels.background.color = "#585d73",
+      column_labels.background.color = "#585d93",
       column_labels.font.size = px(16),
       heading.border.bottom.width = px(2),
-      heading.border.bottom.color = "#585d73",
+      heading.border.bottom.color = "#585d93",
       heading.border.lr.width = px(2),
-      heading.border.lr.color =  "#585d73",
-      table_body.hlines.color = "#585d73",
+      heading.border.lr.color =  "#585d93",
+      table_body.hlines.color = "#585d93",
       table.border.top.width = px(2),
-      table.border.top.color = "#585d73",
-      table.border.bottom.color = "#585d73",
+      table.border.top.color = "#585d93",
+      table.border.bottom.color = "#585d93",
       table.border.bottom.width = px(2),
       column_labels.border.top.width = px(2),
-      column_labels.border.top.color = "#585d73",
+      column_labels.border.top.color = "#585d93",
       column_labels.border.bottom.width = px(2),
-      column_labels.border.bottom.color = "#585d73",
+      column_labels.border.bottom.color = "#585d93",
       row_group.font.size = px(14),
-      row.striping.background_color = "#585d73",
+      row.striping.background_color = "#585d93",
       data_row.padding= px(2),
       ...
     ) 
@@ -977,7 +979,7 @@ gt_theme_schedule <- function(data,...) {
     ) %>%
     tab_style(
       style = cell_borders(
-        sides = "all", color = "#585d73", weight = px(1)
+        sides = "all", color = "#585d93", weight = px(1)
       ),
       locations = cells_body(
         columns = everything(),
@@ -985,23 +987,23 @@ gt_theme_schedule <- function(data,...) {
       )
     ) %>% 
     tab_options(
-      column_labels.background.color = "#585d73",
+      column_labels.background.color = "#585d93",
       column_labels.font.size = px(16),
       heading.border.bottom.width = px(2),
-      heading.border.bottom.color = "#585d73",
+      heading.border.bottom.color = "#585d93",
       heading.border.lr.width = px(2),
-      heading.border.lr.color =  "#585d73",
-      table_body.hlines.color = "#585d73",
+      heading.border.lr.color =  "#585d93",
+      table_body.hlines.color = "#585d93",
       table.border.top.width = px(2),
-      table.border.top.color = "#585d73",
-      table.border.bottom.color = "#585d73",
+      table.border.top.color = "#585d93",
+      table.border.bottom.color = "#585d93",
       table.border.bottom.width = px(2),
       column_labels.border.top.width = px(2),
-      column_labels.border.top.color = "#585d73",
+      column_labels.border.top.color = "#585d93",
       column_labels.border.bottom.width = px(2),
-      column_labels.border.bottom.color = "#585d73",
+      column_labels.border.bottom.color = "#585d93",
       row_group.font.size = px(14),
-      row.striping.background_color = "#585d73",
+      row.striping.background_color = "#585d93",
       data_row.padding= px(3),
       ...
     ) 
