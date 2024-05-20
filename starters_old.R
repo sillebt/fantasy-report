@@ -15,7 +15,7 @@ library(readxl)
 options(ffpros.cache = "memory") 
 ffscrapr::clear_cache()
 # Connection --------------------------------------------------------------------
-league_ids <- c(591530379404427264, 650064757319118848, 785068521058115584, 917507729030352896)
+league_ids <- c("591530379404427264", "650064757319118848", "785068521058115584", "917507729030352896")
 seasons <- 2020:2023
 
 # Connection --------------------------------------------------------------------
@@ -188,13 +188,10 @@ full_schedule$opp <- sapply(full_schedule$opp, function(x) {
 
 playoff_tm_2020 <- c("Hosta","Patrick",
                      "Tom","Zac","Tommy","JP")
-
 playoff_tm_2021 <- c("Hosta","Patrick",
                      "Tom","Zac","Naad","Randy")
-
 playoff_tm_2022 <- c("Hosta","Patrick",
                      "Tom","Zac","Tommy","Naad")
-
 playoff_tm_2023 <- c("Zac","Aviel",
                      "Tommy","JP","Tom","Naad")
 
@@ -216,7 +213,6 @@ full_schedule <- full_schedule %>%
     )
   )
 
-
 full_schedule <- full_schedule |>
   filter(season_type != "Consolation")
 
@@ -225,7 +221,6 @@ rm(listofgames,schedule_2020_final,schedule_2021_final,schedule_2022_final,sched
    schedule3_1, schedule3_2, schedule3,
    schedule2_1, schedule2_2, schedule2,
    schedule1_1, schedule1_2, schedule1)
-
 
 # Function to generate standings
 generate_standings <- function(data, season_filter, title, subtitle, filename, special_tm = NULL, is_regular = TRUE) {
@@ -271,10 +266,10 @@ generate_standings <- function(data, season_filter, title, subtitle, filename, s
 
 #### Season-specific standings
 seasons <- list(
-  list(season = 2020, title = "**2020 Final Standings**", subtitle = "**Nicks Chubb's Golden Taint**", filename = "2020_standings.png", special_tm = "Hosta"),
-  list(season = 2021, title = "**2021 Final Standings**", subtitle = "**Iron Banki Claims His Throne**", filename = "2021_standings.png", special_tm = "Naad"),
-  list(season = 2022, title = "**2022 Season Standings**", subtitle = "**Tommy's Tainted Trophy**", filename = "2022_standings.png", special_tm = "Tommy"),
-  list(season = 2023, title = "**2023 Season Standings**", subtitle = "**Tom Avoids Buffalo Futility**", filename = "2023_standings.png", special_tm = "Tom")
+  list(season = 2020, title = "**2020 Standings**", subtitle = "**Nicks Chubb's Golden Taint**", filename = "2020_standings.png", special_tm = "Hosta"),
+  list(season = 2021, title = "**2021 Standings**", subtitle = "**Iron Banki Claims His Throne**", filename = "2021_standings.png", special_tm = "Naad"),
+  list(season = 2022, title = "**2022 Standings**", subtitle = "**Tommy's Tainted Trophy**", filename = "2022_standings.png", special_tm = "Tommy"),
+  list(season = 2023, title = "**2023 Standings**", subtitle = "**Tom Avoids Buffalo Futility**", filename = "2023_standings.png", special_tm = "Tom")
 )
 
 # Generate standings for each season
@@ -337,7 +332,7 @@ starters24 <- ff_rosters(conn5) %>%
   mutate(season = 2024, franchise_id = as.integer(franchise_id))
 
 # Join data to create team_dynasty
-team_dynasty <- starters4 %>%
+team_dynasty <- starters24 %>%
   left_join(id_map, by = c("player_id" = "sleeper_id")) %>%
   filter(pos != "DEF" & pos != "K") %>%
   relocate(fp_id) %>%
@@ -347,21 +342,29 @@ team_dynasty <- starters4 %>%
   left_join(franchises_team_dynasty, by = c("season", "franchise_id")) %>%
   relocate(user_name, .before = 2)
 
+lookup1 <- c("1" = "Tom",
+            "2" = "Monty",
+            "3" = "Tommy",
+            "4" = "JP",
+            "5" = "Patrick",
+            "6" = "Aviel",
+            "7" = "Conor",
+            "8" = "Hosta",
+            "9" = "Naad",
+            "10" = "Zac",
+            "11" = "PatL",
+            "12" = "Randy")
+
+
 # Apply team name lookup
-team_dynasty$team_name <- sapply(team_dynasty$user_name, function(x) {
-  if (x %in% names(lookup)) {
-    return(lookup[x])
+team_dynasty$team_name <- sapply(team_dynasty$franchise_id, function(x) {
+  if (x %in% names(lookup1)) {
+    return(lookup1[x])
   } else {
     return(x)
   }
 })
 
-team_dynasty <- team_dynasty %>%
-  mutate(
-    team_name = ifelse(is.na(team_name), "JP", team_name),
-    name = ifelse(is.na(team_name), player_name, name),
-    player_name = ifelse(is.na(player_name), name, player_name)
-  )
 
 # Load and process PlayerProfiler data
 playerprofiler <- read.csv('~/Desktop/fantasy-report/csv/playerprofiler.csv') %>%
@@ -608,7 +611,7 @@ gt_theme_pff <- function(data, ...) {
         cell_text(color = "black", weight = "bold")
       ),
       locations = cells_body(
-        columns = 1:5
+        columns = everything()
       )
     ) %>%
     opt_all_caps() %>%
@@ -656,7 +659,9 @@ team_dynasty2 <- starters %>%
   summarize(
     total_pts = sum(points, na.rm = TRUE),
     avg_pts = mean(points, na.rm = TRUE),
-  )
+    .groups = 'drop'
+  ) |>
+  ungroup()
   
 
 # Apply team name lookup
@@ -669,9 +674,10 @@ team_dynasty2$team_name <- sapply(team_dynasty2$user_name, function(x) {
 })
 
 
-team_dynasty <- team_dynasty2 |>
+team_dynasty3 <- team_dynasty2 |>
   left_join(headshot_players, by = c("season", "player_id" = "sleeper_id")) |>
-  select(headshot_url, season, team_name, user_name, player_id:avg_pts)
+  select(headshot_url, season, team_name, player_id:avg_pts) |>
+  ungroup()
 
 create_historical_table <- function(user_name1, szn) {
   
@@ -680,9 +686,9 @@ create_historical_table <- function(user_name1, szn) {
   showtext_auto()
   
   # Filter user data
-  user_data <- team_dynasty %>%
+  user_data <- team_dynasty3 %>%
     filter(team_name == user_name1, season == szn) %>%
-    select(headshot_url, user_name, season, pos, player_name, total_pts, avg_pts) %>%
+    select(headshot_url, team_name, season, pos, player_name, total_pts, avg_pts) %>%
     arrange(pos, -total_pts) 
   
   # Create the starting lineup
@@ -710,30 +716,30 @@ create_historical_table <- function(user_name1, szn) {
     head(n = 12)
   bench$roster <- "Bench"
   
-  # Combine all into final lineup
-  final_lineup <- bind_rows(starting_lineup, flex_players, bench)
+  # Combine all into final lineup and remove unnecessary columns
+  final_lineup <- bind_rows(starting_lineup, flex_players, bench) 
+
+  final_lineup <- final_lineup |>
+    select(-team_name, -season)
   
   # Generate gt table
   gt_table <- final_lineup %>%
-    select(-user_name, -season, -player_id) %>%
     group_by(roster) %>%
     gt() %>%
     tab_header(title = md(paste0("**", user_name1, " ", szn, " Dynasty Roster**")),
                subtitle = "Ranked by Points Scored") %>%
     tab_source_note(source_note = md("**Bench**: Top-12 Only")) %>%
     gt_img_rows(headshot_url) %>% 
-    fmt_number(columns = "total_pts",
-               decimals = 0) %>%
-    fmt_number(columns = "avg_pts",
-               decimals = 1) %>%
+    fmt_number(columns = "total_pts", decimals = 0) %>%
+    fmt_number(columns = "avg_pts", decimals = 1) %>%
     gt_theme_pff()
   
   return(gt_table)
 }
 
 # Get unique user names and seasons
-unique_names <- unique(team_dynasty2$team_name)
-unique_szns <- unique(team_dynasty2$season)
+unique_names <- unique(team_dynasty3$team_name)
+unique_szns <- unique(team_dynasty3$season)
 
 # Loop through each season and each user name to create and save the tables
 for (name in unique_names) {
@@ -741,7 +747,7 @@ for (name in unique_names) {
     gt_table <- create_historical_table(name, szn)
     gtsave(
       gt_table,
-      paste0("output/rosters/", szn, "/dynasty_roster_", name, ".png")
+      paste0("output/rosters/", szn, "_", name, "_dynasty_roster", ".png")
     )
   }
 }
@@ -796,27 +802,25 @@ gt_theme_schedule <- function(data,...) {
         columns = everything(),
         rows = everything()
       )
-    ) %>% 
-    opt_row_striping() %>%
+    ) %>%
     # change overall table styling for borders and striping
     tab_options(
-      column_labels.background.color = "#585d73",
+      column_labels.background.color = "#585d93",
       column_labels.font.size = px(16),
       heading.border.bottom.width = px(2),
-      heading.border.bottom.color = "#585d73",
+      heading.border.bottom.color = "#585d93",
       heading.border.lr.width = px(2),
-      heading.border.lr.color =  "#585d73",
-      table_body.hlines.color = "#585d73",
+      heading.border.lr.color =  "#585d93",
+      table_body.hlines.color = "#585d93",
       table.border.top.width = px(2),
-      table.border.top.color = "#585d73",
-      table.border.bottom.color = "#585d73",
+      table.border.top.color = "#585d93",
+      table.border.bottom.color = "#585d93",
       table.border.bottom.width = px(2),
       column_labels.border.top.width = px(2),
-      column_labels.border.top.color = "#585d73",
+      column_labels.border.top.color = "#585d93",
       column_labels.border.bottom.width = px(2),
-      column_labels.border.bottom.color = "#585d73",
-      row_group.font.size = px(14),
-      row.striping.background_color = "#ededed",
+      column_labels.border.bottom.color = "#585d93",
+      row_group.font.size = px(12),
       data_row.padding= px(3),
       ...
     ) 
@@ -882,11 +886,11 @@ get_season_recap <- function(tm1, year) {
   gt_table <- user_data %>%
     select(week, opponent, win_loss, pf, pa, margin, streak) %>%
     gt() %>%
-    gt_highlight_rows(rows = streak > 0 | margin >= 0, fill = "#FFFDE9", bold_target_only = FALSE) %>%
+    gt_highlight_rows(rows = streak > 0 | margin >= 0, fill = "#FFE990", bold_target_only = FALSE) %>%
     tab_header(title = paste(year, "Schedule")) %>%
     fmt_number(columns = vars(pf, pa, margin), decimals = 1) %>% 
     cols_align(align = "center", columns = vars(win_loss, pf, pa, margin, streak)) %>%
-    gt_theme_schedule() # Ensure this function is defined
+    gt_theme_schedule() # Ensure this function is defined 
   
   return(gt_table)
 }
@@ -903,7 +907,7 @@ for (year in years) {
     gt_table <- get_season_recap(tm, year)
     
     # Define a dynamic file path based on both team and year
-    file_path <- paste0("output/py_schedule/", year, "_season_schedule_", gsub(" ", "_", tm), ".png")
+    file_path <- paste0("output/season_schedule/", year, "_", tm, "_season_schedule.png")
     gtsave(gt_table, file_path)
   }
 }
@@ -995,7 +999,7 @@ calculate_power_rankings <- function(season_data, season_year) {
   # Adjust power rankings by league average
   power_rankings <- power_rankings %>%
     mutate(adj_power_ranking = round(power_rank / league_average, 4)) %>%
-    select(team = tm, season, power = adj_power_ranking) %>%
+    select(season, team = tm, power = adj_power_ranking) %>%
     arrange(-power)
   
   return(power_rankings)
@@ -1003,11 +1007,12 @@ calculate_power_rankings <- function(season_data, season_year) {
 
 generate_and_save_table <- function(power_rankings, season_year, file_path) {
   gt_table <- power_rankings %>%
+    select(-season) |>
     gt() %>%
     tab_header(title = md(paste(season_year, "Power Rankings")),
                subtitle = "Adj by League Season Avg") %>%
     gt_theme_schedule() %>%
-    cols_align("center", columns = 1:3) %>%
+    cols_align("center", columns = 1:2) %>%
     tab_options(data_row.padding = px(5)) %>%
     tab_source_note(md("**Calc**: 60% Avg PF, 20% Win %, 20% PF Variance"))
   
@@ -1026,9 +1031,6 @@ for (season_year in season_years) {
 
 
 #### CONSOLIDATED PWER RANK
-# Define the colors for each season
-season_colors <- c("2020" = "#FFDFD3", "2021" = "#FFFFB5", "2022" = "#D4F1F4", "2023" = "#DAD7CD")
-
 #### POWER RANK
 calculate_power_rankings_all <- function(season_data) {
   # Calculate power rankings for all seasons
@@ -1058,22 +1060,13 @@ calculate_power_rankings_all <- function(season_data) {
   # Adjust power rankings by league average
   power_rankings <- power_rankings %>%
     mutate(adj_power_ranking = round(power_rank / league_average, 4)) %>%
-    select(team = tm, season, power = adj_power_ranking) %>%
+    select(season, team = tm, power = adj_power_ranking) %>%
     arrange(-power)
   
   return(power_rankings)
 }
 
-apply_row_stripping <- function(data, colors) {
-  data %>%
-    rowwise() %>%
-    mutate(row_color = colors[as.character(season)]) %>%
-    ungroup()
-}
-
-generate_and_save_table <- function(power_rankings, season_year, file_path, colors) {
-  power_rankings <- apply_row_stripping(power_rankings, colors)
-  
+generate_and_save_table <- function(power_rankings, season_year, file_path) {
   gt_table <- power_rankings %>%
     gt() %>%
     tab_header(title = md(paste(season_year, "Power Rankings")),
@@ -1081,20 +1074,12 @@ generate_and_save_table <- function(power_rankings, season_year, file_path, colo
     gt_theme_schedule() %>%
     cols_align("center", columns = 1:3) %>%
     tab_options(data_row.padding = px(5)) %>%
-    tab_style(
-      style = list(
-        cell_fill(color = row_color)
-      ),
-      locations = cells_body(rows = TRUE)
-    ) %>%
     tab_source_note(md("**Calc**: 60% Avg PF, 20% Win %, 20% PF Variance"))
   
   gtsave(gt_table, file_path)
 }
 
-generate_and_save_combined_table <- function(combined_power_rankings, file_path, colors) {
-  combined_power_rankings <- apply_row_stripping(combined_power_rankings, colors)
-  
+generate_and_save_combined_table <- function(combined_power_rankings, file_path) {
   gt_table <- combined_power_rankings %>%
     gt() %>%
     tab_header(title = md("All Seasons Power Rankings"),
@@ -1102,23 +1087,18 @@ generate_and_save_combined_table <- function(combined_power_rankings, file_path,
     gt_theme_schedule() %>%
     cols_align("center", columns = 1:3) %>%
     tab_options(data_row.padding = px(5)) %>%
-    tab_style(
-      style = list(
-        cell_fill(color = row_color)
-      ),
-      locations = cells_body(rows = TRUE)
-    ) %>%
     tab_source_note(md("**Calc**: 60% Avg PF, 20% Win %, 20% PF Variance"))
   
   gtsave(gt_table, file_path)
 }
 
+# Get unique seasons from the full schedule
 season_years <- unique(full_schedule$season)
 
 for (season_year in season_years) {
-  power_rankings <- calculate_power_rankings(full_schedule, season_year)
-  file_path <- paste0('output/history/power_rank_standings_yearly_', season_year, 'v2_.png')
-  generate_and_save_table(power_rankings, season_year, file_path, season_colors)
+  power_rankings <- calculate_power_rankings_all(full_schedule %>% filter(season == season_year))
+  file_path <- paste0('output/history/power_rank_standings_yearly_', season_year, 'v3_.png')
+  generate_and_save_table(power_rankings, season_year, file_path)
 }
 
 # Calculate power rankings for all seasons
@@ -1126,7 +1106,7 @@ combined_power_rankings <- calculate_power_rankings_all(full_schedule)
 
 # Save the combined power rankings table
 file_path_combined <- 'output/history/combined_power_rankings.png'
-generate_and_save_combined_table(combined_power_rankings, file_path_combined, season_colors)
+generate_and_save_combined_table(combined_power_rankings, file_path_combined)
 
 
 #### Summary Teams
@@ -1244,7 +1224,7 @@ gt_table <- value_summary %>%
     columns = c(team_value, QB, RB, WR, TE),
     decimals = 0
   )
-
+gt_table
 # Return the gt table
 gtsave(
   gt_table,
@@ -1348,3 +1328,237 @@ gtsave(
   gt_table,
   filename = file.path('output/2024/', "2024_Roster_Age_by_Position.png"),
   zoom = 1.5)
+
+
+########### TRADES TRADES TRADES
+
+
+# Load transactions for each season
+connections <- list(conn1, conn2, conn3, conn4)
+seasons <- c(2020, 2021, 2022, 2023)
+weeks <- list(1:17, 1:18, 1:18, 1:18)
+
+# Combine trades data
+trades <- map2_dfr(connections, seasons, ~ {
+  ff_transactions(.x, weeks = weeks[[which(seasons == .y)]]) %>%
+    filter(type == "trade") %>%
+    mutate(season = .y) 
+})
+
+# Clean up player names
+trades <- trades %>%
+  mutate(
+    player_name = if_else(is.na(player_name), player_id, player_name),
+    player_name = str_replace_all(player_name, "_pick_from_franchise_[0-9]+", ""),
+    player_name = str_replace_all(player_name, "_", " "),
+    pos = replace_na(pos, "Pick"),
+    franchise_id = as.integer(franchise_id),
+    trade_partner = as.integer(trade_partner)
+  )
+
+# Summarize trades data
+traded_away <- trades %>%
+  filter(type_desc == "traded_away") %>%
+  select(season, timestamp, team_1 = franchise_id, traded_away = player_name, trade_partner) %>%
+  group_by(season, timestamp, team_1, trade_partner) %>%
+  summarise(players_traded_away = toString(traded_away), .groups = 'drop')
+
+traded_for <- trades %>%
+  filter(type_desc == "traded_for") %>%
+  select(season, timestamp, team_2 = franchise_id, traded_for = player_name) %>%
+  group_by(season, timestamp, team_2) %>%
+  summarise(players_traded_for = toString(traded_for), .groups = 'drop')
+
+trades_combined <- traded_away %>%
+  left_join(traded_for, by = c("season", "timestamp", "team_1" = "team_2")) %>%
+  mutate(timestamp = format(timestamp, "%m/%d/%y"))
+
+# Load additional data
+trade_df <- trades_combined
+lookup_3 <- c("8" = "Hosta", "1" = "Tom", "5" = "Patrick", "10" = "Zac", "9" = "Naad", 
+              "3" = "Tommy", "12" = "Randal", "4" = "JP", "6" = "Aviel", "2" = "Montel", 
+              "7" = "Conor")
+lookup_df <- data.frame(franchise_id = names(lookup_3), team_name = unname(lookup_3), 
+                        stringsAsFactors = FALSE) %>%
+  mutate(franchise_id = as.character(franchise_id), season = 2024)
+
+# Prepare final trades data
+trades_final <- trades_combined %>%
+  mutate(
+    franchise_id = as.character(team_1),
+    trade_partner = as.character(trade_partner)
+  ) %>%
+  select(season, date = timestamp, franchise_id, trade_partner, players_traded_away, players_traded_for)
+
+trade_df <- trades_final %>%
+  left_join(lookup_df, by = "franchise_id") %>%
+  left_join(lookup_df, by = c("trade_partner" = "franchise_id")) %>%
+  select(season = season.x, date, franchise_id, team_name = team_name.x, 
+         trade_partner_id = trade_partner, trade_partner = team_name.y, 
+         players_traded_away, players_traded_for) %>%
+  mutate(
+    team_name = case_when(
+      season %in% c(2020, 2021, 2022) & franchise_id == "11" ~ "Logan",
+      season == 2023 & franchise_id == "11" ~ "Pat L",
+      is.na(franchise_id) ~ "Logan",
+      TRUE ~ team_name
+    ),
+    trade_partner = case_when(
+      season %in% c(2020, 2021, 2022) & trade_partner_id == "11" ~ "Logan",
+      season == 2023 & trade_partner_id == "11" ~ "Pat L",
+      is.na(trade_partner_id) ~ "Logan",
+      TRUE ~ trade_partner
+    )
+  ) %>%
+  select(season, date, team_name, trade_partner, players_traded_away, players_traded_for) %>%
+  arrange(season, date, team_name, trade_partner)
+
+write_csv(trade_df, 'trades_final.csv')
+
+### GT Table Generation
+
+generate_gt_trade <- function(club) {
+  gt_table <- trade_df %>%
+    filter(team_name == club) %>%
+    arrange(season, date) %>%
+    mutate(
+      players_traded_for = str_replace_all(players_traded_for, ",", "<br>"),
+      players_traded_away = str_replace_all(players_traded_away, ",", "<br>")
+    )
+  
+  sysfonts::font_add_google("Roboto", "Roboto")
+  showtext_auto()
+  
+  gt_table %>%
+    select(season:team_name, team = trade_partner, received = players_traded_for, traded = players_traded_away) %>%
+    gt() %>%
+    cols_hide(columns = c(season, team_name)) %>%
+    cols_width(date ~ px(80), team ~ px(80)) %>%
+    opt_all_caps() %>%
+    tab_header(title = paste(club, "Trades by Season"), subtitle = "2020 - 2023") %>%
+    fmt_markdown(columns = vars(received, traded)) %>%
+    tab_style(style = cell_text(align = "center", style = "normal", weight = "normal", 
+                                stretch = "extra-condensed", transform = "uppercase"), 
+              locations = cells_body(columns = c(received, traded))) %>%
+    tab_style(style = cell_text(align = "right", style = "normal", weight = "bold", 
+                                stretch = "condensed", transform = "uppercase"), 
+              locations = cells_body(columns = c(date, team))) %>%
+    tab_style(style = cell_borders(sides = c("top", "bottom"), color = "grey", style = "solid", 
+                                   weight = px(1.5)), 
+              locations = cells_body(columns = c(date, team, received, traded))) %>%
+    tab_style(style = cell_text(color = "black", align = "center", style = "normal", weight = "bolder", 
+                                stretch = "extra-expanded", decorate = "underline", transform = "uppercase"), 
+              locations = cells_title(c("title", "subtitle"))) %>%
+    tab_style(style = cell_text(color = "black", align = "center", style = "normal", weight = "bolder", 
+                                stretch = "expanded", transform = "uppercase"), 
+              locations = cells_column_labels(columns = everything())) %>%
+    tab_style(style = list(cell_fill(color = "grey"), cell_text(color = "black", size = "medium", 
+                                                                   style = "normal", weight = "bolder", 
+                                                                   stretch = "extra-expanded", transform = "uppercase")), 
+              locations = cells_row_groups()) %>%
+    tab_options(table.align = "center", heading.align = "center", heading.background.color = "lightblue", 
+                heading.title.font.size = px(20), heading.title.font.weight = "bolder", column_labels.font.size = px(18), 
+                column_labels.font.weight = "bolder", column_labels.background.color = "lightblue", 
+                table_body.hlines.color = "transparent", table.border.top.width = px(2), 
+                table.border.top.color = "transparent", table.border.bottom.color = "transparent", 
+                table.border.bottom.width = px(2), column_labels.border.top.width = px(2), 
+                column_labels.border.top.color = "transparent", column_labels.border.bottom.width = px(2), 
+                column_labels.border.bottom.color = "transparent")
+}
+
+unique_clubs <- unique(trade_df$team_name)
+
+for (club in unique_clubs) {
+  p <- generate_gt_trade(club)
+  gtsave(p, filename = paste0("output/trades/Franchise_Trades_", club, ".png"))
+}
+
+trade_combined <- trade_df |>
+  mutate(
+    teams = paste0(team_name, " & ", trade_partner))
+
+# Normalize team names to identify duplicates
+trades_combined <- trade_combined %>%
+  rowwise() %>%
+  mutate(
+    normalized_teams = paste(sort(c(team_name, trade_partner)), collapse = " & ")
+  )
+
+# Remove duplicate trades where normalized_teams are the same on the same date
+remove_duplicates <- function(df) {
+  df %>%
+    group_by(date, normalized_teams) %>%
+    filter(row_number() == 1) %>%
+    ungroup() %>%
+    select(-normalized_teams)
+}
+
+trade_combined <- remove_duplicates(trades_combined)
+
+
+
+# Prepare final trades data
+trades_final <- trade_combined %>%
+  select(season, date, team_1 = team_name, team_2 = trade_partner, team_1_received = players_traded_for, team_2_received = players_traded_away)
+
+
+generate_gt_season <- function(season_year) {
+  gt_table <- trades_final %>%
+    filter(season == season_year) %>%
+    arrange(date) %>%
+    mutate(
+      team_1_received = str_replace_all(team_1_received, ",", "<br>"),
+      team_2_received = str_replace_all(team_2_received, ",", "<br>")
+    )
+  
+  sysfonts::font_add_google("Roboto", "Roboto")
+  showtext_auto()
+  
+  gt_table %>%
+    select(date, team_1, team_1_received, team_2, team_2_received) %>%
+    gt() %>%
+    cols_width(date ~ px(80), team_1 ~ px(100), team_2 ~ px(100)) %>%
+    opt_all_caps() %>%
+    tab_header(title = paste("Trades! - ", season_year, " Season")) %>%
+    fmt_markdown(columns = c(team_1_received, team_2_received)) %>%
+    tab_style(style = cell_text(align = "center", style = "normal", weight = "normal", 
+                                stretch = "extra-condensed", transform = "uppercase"), 
+              locations = cells_body(columns = c(team_1_received, team_2_received))) %>%
+    tab_style(style = cell_text(align = "right", style = "normal", weight = "bold", 
+                                stretch = "condensed", transform = "uppercase"), 
+              locations = cells_body(columns = c(date, team_1, team_2))) %>%
+    tab_style(style = cell_borders(sides = c("top", "bottom"), color = "grey", style = "solid", 
+                                   weight = px(1.5)), 
+              locations = cells_body(columns = c(date, team_1, team_1_received, team_2, team_2_received))) %>%
+    tab_style(style = cell_text(color = "black", align = "center", style = "normal", weight = "bolder", 
+                                stretch = "extra-expanded", decorate = "underline", transform = "uppercase"), 
+              locations = cells_title(c("title", "subtitle"))) %>%
+    tab_style(style = cell_text(color = "black", align = "center", style = "normal", weight = "bolder", 
+                                stretch = "expanded", transform = "uppercase"), 
+              locations = cells_column_labels(columns = everything())) %>%
+    tab_style(style = list(cell_fill(color = "grey"), cell_text(color = "black", size = "medium", 
+                                                                style = "normal", weight = "bolder", 
+                                                                stretch = "extra-expanded", transform = "uppercase")), 
+              locations = cells_row_groups()) %>%
+    tab_options(table.align = "center", heading.align = "center", heading.background.color = "lightblue", 
+                heading.title.font.size = px(18), heading.title.font.weight = "bolder", column_labels.font.size = px(18), 
+                column_labels.font.weight = "bolder", column_labels.background.color = "lightblue", 
+                table_body.hlines.color = "transparent", table.border.top.width = px(2), 
+                table.border.top.color = "transparent", table.border.bottom.color = "transparent", 
+                table.border.bottom.width = px(2), column_labels.border.top.width = px(2), 
+                column_labels.border.top.color = "transparent", column_labels.border.bottom.width = px(2), 
+                column_labels.border.bottom.color = "transparent") %>%
+    cols_label(
+      date = "Date",
+      team_1 = "Team 1",
+      team_1_received = "Team 1 Acquired",
+      team_2 = "Team 2",
+      team_2_received = "Team 2 Acquired"
+    )
+}
+
+# Generate and save tables for each season
+for (season_year in seasons) {
+  p <- generate_gt_season(season_year)
+  gtsave(p, filename = paste0("output/trades/Season_Trades_", season_year, ".png"))
+}
