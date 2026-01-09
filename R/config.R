@@ -175,6 +175,26 @@ SEASON_STANDINGS_CONFIG <- list(
 )
 
 # -----------------------------------------------------------------------------
+# Trade Tribunal Constants
+# -----------------------------------------------------------------------------
+
+#' Win threshold for declaring a trade winner (in fantasy points)
+TRADE_WIN_THRESHOLD <- 50
+
+#' Measurement window in seasons for trade evaluation
+TRADE_MEASUREMENT_SEASONS <- 2
+
+#' Trade analysis color palette
+TRADE_COLORS <- list(
+  winner = "#10b981",     # Emerald - winning verdict
+  loser = "#f43f5e",      # Rose - losing verdict
+  push = "#64748b",       # Slate - neutral/push
+  header = "#1e3a5a",     # Navy - table headers
+  background = "#f8fafc", # Off-white - backgrounds
+  accent = "#fbbf24"      # Gold - marquee/best trades
+)
+
+# -----------------------------------------------------------------------------
 # Styling Constants
 # -----------------------------------------------------------------------------
 

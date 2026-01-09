@@ -174,9 +174,10 @@ fetch_scoring_single <- function(conn, season) {
   scoring <- ff_scoringhistory(conn, season = season)
 
   # Filter out defensive positions and select key columns
+  # Include pos for VOR calculations in trade analysis
   scoring %>%
     filter(!pos %in% c("LB", "DB", "DL")) %>%
-    select(season, week, sleeper_id, player_name, points, team)
+    select(season, week, sleeper_id, player_name, pos, points, team)
 }
 
 #' Fetch scoring history for all seasons

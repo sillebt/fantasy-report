@@ -25,6 +25,8 @@ source("R/config.R")
 source("R/data_fetch.R")
 source("R/data_transform.R")
 source("R/visualizations.R")
+source("R/trade_analysis.R")
+source("R/trade_visualizations.R")
 
 # Load additional required libraries
 library(dplyr)
@@ -228,6 +230,29 @@ generate_median_analysis <- function(full_schedule) {
   message("Median analysis complete!")
 }
 
+#' Generate Trade Tribunal analysis and visualizations
+#' @param trades Raw trades data from fetch_all_trades()
+#' @param scoring Scoring history data from fetch_all_scoring()
+#' @param franchise_lookup Franchise lookup from get_franchise_lookup()
+generate_trade_tribunal <- function(trades, scoring, franchise_lookup) {
+  if (is.null(trades) || nrow(trades) == 0) {
+    message("\n--- Skipping Trade Tribunal (no trade data) ---")
+    return(invisible(NULL))
+  }
+
+  message("\n--- Generating Trade Tribunal ---")
+
+  # Run the full tribunal analysis
+  tribunal_results <- run_trade_tribunal(trades, scoring, franchise_lookup)
+
+  # Generate all visualizations
+  visuals <- generate_trade_tribunal_visuals(tribunal_results)
+
+  message("Trade Tribunal complete!")
+
+  invisible(tribunal_results)
+}
+
 # -----------------------------------------------------------------------------
 # Main Entry Points
 # -----------------------------------------------------------------------------
@@ -262,6 +287,7 @@ generate_all_reports <- function(parallel = TRUE) {
   generate_notable_games(data$full_schedule)
   generate_trades(data$trades)
   generate_median_analysis(data$full_schedule)
+  generate_trade_tribunal(data$trades, data$scoring, data$franchise_lookup)
 
   # Save full schedule for reference
   write_csv(data$full_schedule, "fullschedule.csv")
@@ -306,6 +332,51 @@ generate_power_only <- function() {
   generate_new_power_rankings(full_schedule)
 }
 
+#' Generate only Trade Tribunal analysis
+#' @param parallel Logical. Use parallel processing for API calls (default: TRUE)
+generate_tribunal_only <- function(parallel = TRUE) {
+  ensure_output_dirs()
+
+  message("\n========================================")
+  message("   TRADE TRIBUNAL ANALYSIS")
+  message("   Seasons: 2020-2024")
+  message("========================================\n")
+
+  # Create connections
+  connections <- create_all_connections()
+
+  # Setup parallel processing if requested
+  if (parallel) {
+    setup_parallel(verbose = TRUE)
+  }
+
+  # Fetch required data
+  message("Fetching franchises...")
+  franchises <- fetch_all_franchises(connections, parallel = parallel)
+  franchise_lookup <- get_franchise_lookup(franchises)
+
+  message("Fetching scoring history...")
+  scoring <- fetch_all_scoring(connections, parallel = parallel)
+
+  message("Fetching trades...")
+  trades <- fetch_all_trades(connections, parallel = parallel)
+
+  # Disable parallel processing after fetching
+  if (parallel) {
+    disable_parallel()
+  }
+
+  # Run tribunal
+  tribunal_results <- generate_trade_tribunal(trades, scoring, franchise_lookup)
+
+  message("\n========================================")
+  message("   TRADE TRIBUNAL COMPLETE!")
+  message("========================================")
+  message("Outputs saved to: output/trades/")
+
+  invisible(tribunal_results)
+}
+
 # -----------------------------------------------------------------------------
 # Interactive Usage Message
 # -----------------------------------------------------------------------------
@@ -316,4 +387,5 @@ message("  generate_all_reports()    - Generate all tables and charts")
 message("  generate_standings_only() - Generate only standings tables")
 message("  generate_h2h_only()       - Generate only head-to-head tables")
 message("  generate_power_only()     - Generate All-Play, Z-Score & Quadrant plots")
+message("  generate_tribunal_only()  - Generate Trade Tribunal analysis")
 message("\nRun generate_all_reports() to start.")
