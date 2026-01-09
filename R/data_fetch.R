@@ -53,9 +53,11 @@ disable_parallel <- function() {
 #' @return ff_connect object for API calls
 create_connection <- function(season) {
   league_id <- get_league_id(season)
+  # Keep league_id as character to avoid floating point precision loss
+  # on large integer IDs (18+ digits exceed R's numeric precision)
   ff_connect(
     platform  = "sleeper",
-    league_id = as.numeric(league_id),
+    league_id = league_id,
     season    = season
   )
 }
