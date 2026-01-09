@@ -42,6 +42,18 @@ library(flextable)
 library(janitor)
 library(kableExtra)
 
+# Source configuration for dynamic paths
+source("R/config.R")
+
+# Helper function to get standings paths dynamically
+get_standings_path <- function(year) {
+  paste0("output/history/", year, "_standings.png")
+}
+
+# Get season range for titles
+season_range <- get_season_range_label()
+current_season <- CURRENT_SEASON
+
 ```
 
 
@@ -73,17 +85,17 @@ So go attack this thing, boys. Attack it like I went after a few Chile Rellenos 
 ![The Goal](img/confetti.png){fig.align='center'}
 
 \newpage
-## The Results 
+## The Results
 
 ### Final Standings
-<p style="text-align: center;">**All-Time Dynasty Standings & 2022 Final Regular Season Standings**</p>
+<p style="text-align: center;">**All-Time Dynasty Standings & `r current_season` Final Regular Season Standings**</p>
 ```{r, echo=FALSE,out.width="49%",out.height="49%",fig.show='hold',fig.align='center', fig.cap="Standings"}
-knitr::include_graphics(c("output/history/all_time_standings.png","output/history/2022_standings.png"))
+knitr::include_graphics(c("output/history/all_time_standings.png", get_standings_path(current_season)))
 ```
 \newpage
-<p style="text-align: center;">**2021 & 2020 Final Regular Season Standings**</p>
+<p style="text-align: center;">**`r current_season - 1` & `r current_season - 2` Final Regular Season Standings**</p>
 ```{r, echo=FALSE,out.width="50%",out.height="50%",fig.show='hold',fig.align='center', fig.cap="Standings"}
-knitr::include_graphics(c("output/history/2021_standings.png","output/history/2020_standings.png"))
+knitr::include_graphics(c(get_standings_path(current_season - 1), get_standings_path(current_season - 2)))
 ```
 \newpage
 ### Notable Matchups
@@ -135,21 +147,21 @@ nulla pariatur.
 \newpage
 ## The Franchises
 
-It's almost Week 1 and these are the final rosters each Franchise has selected, by choice or not, to take the field. 
+It's almost Week 1 and these are the final rosters each Franchise has selected, by choice or not, to take the field.
 
-Anyone of you can build plausible-sounding, 'fact-based' narratives that attempt to explain why your roster is taking home the trophy. Only time will tell. 
+Anyone of you can build plausible-sounding, 'fact-based' narratives that attempt to explain why your roster is taking home the trophy. Only time will tell.
 
-Hopefully, 2023 doesn't require a tragic, near-death on live TV to determine its outcome. In a perfect world, it won't end with a tainted, asterisk-bound title. I think that's something we can all agree on - unlike saying, "Congrats, Tommy Tsao!"
+Hopefully, `r current_season + 1` doesn't require a tragic, near-death on live TV to determine its outcome. In a perfect world, it won't end with a tainted, asterisk-bound title. I think that's something we can all agree on - unlike saying, "Congrats, Tommy Tsao!"
 
-With that - on to 2023 and previewing each franchise's 2023 roster, strengths, weaknesses, historical results and rivals. A Dynasty version of Why Your Team Sucks but, unlike Deadspin's review of the NFL, most of your guy's rosters are genuine, Oakland-level dogshit. 
+With that - on to `r current_season + 1` and previewing each franchise's `r current_season + 1` roster, strengths, weaknesses, historical results and rivals. A Dynasty version of Why Your Team Sucks but, unlike Deadspin's review of the NFL, most of your guy's rosters are genuine, Oakland-level dogshit. 
 
 _To preview each team, the following information is aggregated:_
 
-1. 2023 Pre-Draft Roster (Including Various Rankings)
+1. `r current_season + 1` Pre-Draft Roster (Including Various Rankings)
 
-2. 2022 Final Roster (Ranked by Fantasy Points Scored in Line-Up)
+2. `r current_season` Final Roster (Ranked by Fantasy Points Scored in Line-Up)
 
-3. 2022 Final Schedule Win/Loss 
+3. `r current_season` Final Schedule Win/Loss
 
 4. Career Head to Head Records vs League Opponents (All-Time)
 

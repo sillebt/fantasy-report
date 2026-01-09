@@ -25,11 +25,22 @@ source("R/config.R")
 # Font Setup
 # -----------------------------------------------------------------------------
 
+# Track whether fonts have been initialized
+.fonts_initialized <- FALSE
+
 #' Initialize fonts for table rendering
-setup_fonts <- function() {
-  sysfonts::font_add_google("Roboto", "Roboto")
-  showtext::showtext_auto()
+#' @param force Logical. Force re-initialization even if already done
+setup_fonts <- function(force = FALSE) {
+  if (!.fonts_initialized || force) {
+    sysfonts::font_add_google("Roboto", "Roboto")
+    showtext::showtext_auto()
+    assign(".fonts_initialized", TRUE, envir = parent.frame())
+  }
+  invisible(TRUE)
 }
+
+# Initialize fonts once when this file is sourced
+setup_fonts()
 
 # -----------------------------------------------------------------------------
 # GT Themes
@@ -207,7 +218,7 @@ generate_standings_table <- function(standings, title, subtitle, filename,
     tab_header(title = md(title), subtitle = md(subtitle)) %>%
     gt_theme_espn_custom() %>%
     cols_align("left", columns = 1) %>%
-    tab_source_note(md("**Seasons: 2020-2023 | PF/PA Represent Avg/Gm**"))
+    tab_source_note(md(paste0("**Seasons: ", get_season_range_label(), " | PF/PA Represent Avg/Gm**")))
 
   gtsave(gt_table, paste0(output_path, filename))
   invisible(gt_table)
@@ -222,8 +233,6 @@ generate_standings_table <- function(standings, title, subtitle, filename,
 #' @param team Team name to filter for
 #' @return gt table object
 generate_h2h_table <- function(h2h_data, team) {
-  setup_fonts()
-
   h2h_data %>%
     filter(tm == team) %>%
     arrange(-wins, -avg_mrg) %>%
@@ -256,8 +265,6 @@ save_all_h2h_tables <- function(h2h_data, output_path = OUTPUT_PATHS$headtohead)
 #' @param season Season year
 #' @return gt table object
 generate_schedule_table <- function(recap_data, team, season) {
-  setup_fonts()
-
   recap_data %>%
     gt() %>%
     gt_highlight_rows(
@@ -300,8 +307,6 @@ generate_notable_games_table <- function(data, title) {
 #' @param season_year Season year (or "All" for combined)
 #' @return gt table object
 generate_power_rankings_table <- function(power_data, season_year) {
-  setup_fonts()
-
   title_text <- if (season_year == "All") {
     "All Seasons Power Rankings"
   } else {
@@ -332,8 +337,6 @@ generate_power_rankings_table <- function(power_data, season_year) {
 #' @param team Team name
 #' @return gt table object
 generate_trade_table <- function(trade_data, team) {
-  setup_fonts()
-
   gt_data <- trade_data %>%
     filter(team_name == team) %>%
     arrange(season, date) %>%
@@ -352,7 +355,7 @@ generate_trade_table <- function(trade_data, team) {
     gt() %>%
     cols_hide(columns = c(season, team_name)) %>%
     cols_width(date ~ px(80), team ~ px(80)) %>%
-    tab_header(title = paste(team, "Trades by Season"), subtitle = "2020 - 2023") %>%
+    tab_header(title = paste(team, "Trades by Season"), subtitle = get_season_range_label()) %>%
     fmt_markdown(columns = c(received, traded)) %>%
     gt_theme_trades()
 }
@@ -376,11 +379,9 @@ save_all_trade_tables <- function(trade_data, output_path = OUTPUT_PATHS$trades)
 #' Generate dynasty roster table for a team
 #' @param roster_data Roster data with rankings
 #' @param team Team name
-#' @param season Season year
+#' @param season Season year (default: CURRENT_SEASON + 1)
 #' @return gt table object
-generate_dynasty_roster_table <- function(roster_data, team, season = 2024) {
-  setup_fonts()
-
+generate_dynasty_roster_table <- function(roster_data, team, season = CURRENT_SEASON + 1) {
   user_data <- roster_data %>%
     filter(team_name == team) %>%
     arrange(pos, fp_rank)
@@ -431,9 +432,6 @@ generate_dynasty_roster_table <- function(roster_data, team, season = 2024) {
 #' Generate all standings tables
 #' @param full_schedule Full schedule data
 generate_all_standings <- function(full_schedule) {
-  # Load transform functions
-  source("R/data_transform.R")
-
   # Season-specific standings
   for (config in SEASON_STANDINGS_CONFIG) {
     standings <- calculate_standings(
@@ -473,8 +471,6 @@ generate_all_standings <- function(full_schedule) {
 #' Generate all power ranking tables
 #' @param full_schedule Full schedule data
 generate_all_power_rankings <- function(full_schedule) {
-  source("R/data_transform.R")
-
   for (season in SEASONS) {
     power_rankings <- calculate_power_rankings(full_schedule, season)
     gt_table <- generate_power_rankings_table(power_rankings, season)
@@ -490,8 +486,6 @@ generate_all_power_rankings <- function(full_schedule) {
 #' Generate all season schedule tables
 #' @param full_schedule Full schedule data
 generate_all_season_schedules <- function(full_schedule) {
-  source("R/data_transform.R")
-
   for (season in SEASONS) {
     teams <- unique(full_schedule$tm[full_schedule$season == season])
 
@@ -513,8 +507,6 @@ generate_all_season_schedules <- function(full_schedule) {
 #' @param season_year Season year
 #' @return gt table object
 generate_all_play_table <- function(all_play_data, season_year) {
-  setup_fonts()
-
   title_text <- if (season_year == "All") {
     "All-Time All-Play Rankings"
   } else {
@@ -561,8 +553,6 @@ generate_all_play_table <- function(all_play_data, season_year) {
 #' @param full_schedule Full schedule data
 #' @param output_path Output directory
 save_all_play_tables <- function(full_schedule, output_path = OUTPUT_PATHS$history) {
-  source("R/data_transform.R")
-
   for (season in SEASONS) {
     all_play_data <- get_all_play_rankings(full_schedule, season)
     gt_table <- generate_all_play_table(all_play_data, season)
@@ -584,8 +574,6 @@ save_all_play_tables <- function(full_schedule, output_path = OUTPUT_PATHS$histo
 #' @param season_year Season year
 #' @return gt table object
 generate_zscore_table <- function(zscore_data, season_year) {
-  setup_fonts()
-
   title_text <- if (season_year == "All") {
     "All-Time Z-Score Power Rankings"
   } else {
@@ -649,8 +637,6 @@ generate_zscore_table <- function(zscore_data, season_year) {
 #' @param full_schedule Full schedule data
 #' @param output_path Output directory
 save_zscore_tables <- function(full_schedule, output_path = OUTPUT_PATHS$history) {
-  source("R/data_transform.R")
-
   for (season in SEASONS) {
     zscore_data <- get_zscore_rankings(full_schedule, season)
     gt_table <- generate_zscore_table(zscore_data, season)
@@ -680,8 +666,6 @@ save_zscore_tables <- function(full_schedule, output_path = OUTPUT_PATHS$history
 #' @param output_path Output directory
 #' @return ggplot object
 generate_power_quadrant_plot <- function(full_schedule, season_year, output_path = OUTPUT_PATHS$history) {
-  source("R/data_transform.R")
-
   # Get quadrant data
 
   quadrant_data <- get_power_quadrant_data(full_schedule, season_year)

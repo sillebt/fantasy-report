@@ -29,7 +29,11 @@ DRAFT_IDS <- list(
 )
 
 #' Active seasons for analysis
+#' Add new seasons to this vector to include them automatically
 SEASONS <- 2020:2023
+
+#' Get the most recent season
+CURRENT_SEASON <- max(SEASONS)
 
 #' Number of weeks per season (2020 had 17, 2021+ have 18)
 WEEKS_BY_SEASON <- list(
@@ -65,7 +69,7 @@ USERNAME_LOOKUP <- c(
   "patrickliou"    = "Pat Liou"
 )
 
-#' Map franchise IDs to display names (for 2024 season)
+#' Map franchise IDs to display names (for current season)
 FRANCHISE_ID_LOOKUP <- c(
   "1"  = "Tom",
   "2"  = "Montel",
@@ -79,6 +83,16 @@ FRANCHISE_ID_LOOKUP <- c(
   "10" = "Zac",
   "11" = "Pat Liou",
   "12" = "Randal"
+)
+
+#' Historical franchise ownership changes
+#' Used to track owner changes for historical accuracy
+#' Format: franchise_id -> list of (seasons, owner_name)
+FRANCHISE_OWNERSHIP_HISTORY <- list(
+  "11" = list(
+    list(seasons = 2020:2022, owner = "Logan"),
+    list(seasons = 2023:2099, owner = "Pat L")  # 2023 onwards
+  )
 )
 
 # -----------------------------------------------------------------------------
@@ -157,13 +171,14 @@ TRADE_HEADER_COLOR <- "#ffdc73"
 # Output Paths
 # -----------------------------------------------------------------------------
 
+#' Output paths - current_year is dynamically set based on CURRENT_SEASON
 OUTPUT_PATHS <- list(
   history         = "output/history/",
   headtohead      = "output/headtohead/",
   season_schedule = "output/season_schedule/",
   rosters         = "output/rosters/",
   trades          = "output/trades/",
-  current_year    = "output/2024/"
+  current_year    = paste0("output/", CURRENT_SEASON + 1, "/")
 )
 
 # -----------------------------------------------------------------------------
@@ -178,6 +193,33 @@ clean_username <- function(username) {
     return(USERNAME_LOOKUP[username])
   }
   return(username)
+}
+
+#' Get franchise owner name for a specific season
+#' @param franchise_id Character. The franchise ID
+#' @param season Integer. The season year
+#' @return Character. The owner's display name
+get_franchise_owner <- function(franchise_id, season) {
+  franchise_id <- as.character(franchise_id)
+
+  # Check if this franchise has ownership history
+
+  if (franchise_id %in% names(FRANCHISE_OWNERSHIP_HISTORY)) {
+    history <- FRANCHISE_OWNERSHIP_HISTORY[[franchise_id]]
+    for (period in history) {
+      if (season %in% period$seasons) {
+        return(period$owner)
+      }
+    }
+  }
+
+  # Fall back to current lookup
+  if (franchise_id %in% names(FRANCHISE_ID_LOOKUP)) {
+    return(FRANCHISE_ID_LOOKUP[franchise_id])
+  }
+
+  # Return franchise_id if no mapping found
+  return(franchise_id)
 }
 
 #' Get weeks for a given season
@@ -204,10 +246,83 @@ is_playoff_team <- function(team, season) {
   team %in% playoff_teams
 }
 
+#' Get regular season week count for a season
+#' @param season Integer. The season year
+#' @return Integer. Number of regular season weeks
+#' @details NFL expanded to 17 games in 2021, so 2020 had 13 regular season weeks
+#'          and 2021+ have 14 regular season weeks for fantasy purposes.
+get_regular_season_weeks <- function(season) {
+  if (season == 2020) return(13)
+  return(14)
+}
+
 #' Get playoff week cutoff for a season
 #' @param season Integer. The season year
 #' @return Integer. First week of playoffs
 get_playoff_week_cutoff <- function(season) {
-  if (season == 2020) return(14)
-  return(15)
+  get_regular_season_weeks(season) + 1
+}
+
+#' Check if a week is regular season for a given season
+#' @param week Integer. The week number
+#' @param season Integer. The season year
+#' @return Logical. TRUE if regular season week
+is_regular_season_week <- function(week, season) {
+  week <= get_regular_season_weeks(season)
+}
+
+# -----------------------------------------------------------------------------
+# Season Configuration Factory
+# -----------------------------------------------------------------------------
+
+#' Create a season configuration object
+#' @param season Integer. The season year
+#' @param title Optional. Custom title for the season
+#' @param subtitle Optional. Custom subtitle for the season
+#' @param champion Optional. Champion team name (for trophy emoji)
+#' @return List containing season configuration
+create_season_config <- function(season, title = NULL, subtitle = NULL, champion = NULL) {
+  # Auto-generate title/subtitle if not provided
+  if (is.null(title)) {
+    title <- paste0("**", season, " Standings**")
+  }
+  if (is.null(subtitle)) {
+    subtitle <- paste0("**Season ", season, "**")
+  }
+
+  list(
+    season   = season,
+    title    = title,
+    subtitle = subtitle,
+    filename = paste0(season, "_standings.png"),
+    champion = champion,
+    regular_season_weeks = get_regular_season_weeks(season),
+    playoff_week_cutoff = get_playoff_week_cutoff(season),
+    league_id = get_league_id(season),
+    weeks = get_weeks_for_season(season)
+  )
+}
+
+#' Get season range as formatted string
+#' @param seasons Integer vector of seasons (default: SEASONS)
+#' @return Character. Formatted range string (e.g., "2020-2023")
+get_season_range_label <- function(seasons = SEASONS) {
+  paste(min(seasons), max(seasons), sep = "-")
+}
+
+#' Get all configured seasons' metadata
+#' @return List of season configs for all SEASONS
+get_all_season_configs <- function() {
+  configs <- lapply(SEASONS, function(s) {
+    # Use predefined config if available
+    existing <- Filter(function(x) x$season == s, SEASON_STANDINGS_CONFIG)
+    if (length(existing) > 0) {
+      return(existing[[1]])
+    }
+    # Otherwise generate default
+    champion <- CHAMPIONS[[as.character(s)]]
+    create_season_config(s, champion = champion)
+  })
+  names(configs) <- as.character(SEASONS)
+  configs
 }

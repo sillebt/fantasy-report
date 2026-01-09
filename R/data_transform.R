@@ -105,24 +105,25 @@ build_full_schedule <- function(connections, franchise_lookup) {
     arrange(season, week, tm) %>%
     mutate(win_loss = ifelse(result == 1, "W", "L"))
 
-  # Add season type classification
+  # Add season type classification using dynamic week cutoffs
   full_schedule <- full_schedule %>%
+    rowwise() %>%
     mutate(
+      regular_week_cutoff = get_regular_season_weeks(season),
+      playoff_week_start = get_playoff_week_cutoff(season),
       season_type = case_when(
-        # Regular season
-        (season == 2020 & week <= 13) |
-        (season %in% 2021:2023 & week <= 14) ~ "Regular",
+        # Regular season: week <= cutoff for that season (13 for 2020, 14 for 2021+)
+        week <= regular_week_cutoff ~ "Regular",
 
-        # Playoffs (check if team is playoff team)
-        (season == 2020 & week >= 14 & tm %in% PLAYOFF_TEAMS[["2020"]]) |
-        (season == 2021 & week >= 15 & tm %in% PLAYOFF_TEAMS[["2021"]]) |
-        (season == 2022 & week >= 15 & tm %in% PLAYOFF_TEAMS[["2022"]]) |
-        (season == 2023 & week >= 15 & tm %in% PLAYOFF_TEAMS[["2023"]]) ~ "Playoffs",
+        # Playoffs: post regular season AND team made playoffs
+        week >= playoff_week_start & is_playoff_team(tm, season) ~ "Playoffs",
 
         # Consolation (everyone else in late weeks)
         TRUE ~ "Consolation"
       )
     ) %>%
+    ungroup() %>%
+    select(-regular_week_cutoff, -playoff_week_start) %>%
     # Filter out consolation games for most analyses
     filter(season_type != "Consolation")
 
@@ -598,28 +599,18 @@ process_trades <- function(trades) {
     left_join(traded_for, by = c("season", "timestamp", "team_1" = "team_2")) %>%
     mutate(timestamp = format(timestamp, "%m/%d/%y"))
 
-  # Apply team name lookups
+  # Apply team name lookups using dynamic ownership history
   trades_combined %>%
     mutate(
       franchise_id = as.character(team_1),
       trade_partner_id = as.character(trade_partner)
     ) %>%
+    rowwise() %>%
     mutate(
-      team_name = case_when(
-        franchise_id %in% names(FRANCHISE_ID_LOOKUP) ~
-          FRANCHISE_ID_LOOKUP[franchise_id],
-        season %in% c(2020, 2021, 2022) & franchise_id == "11" ~ "Logan",
-        season == 2023 & franchise_id == "11" ~ "Pat L",
-        TRUE ~ franchise_id
-      ),
-      trade_partner_name = case_when(
-        trade_partner_id %in% names(FRANCHISE_ID_LOOKUP) ~
-          FRANCHISE_ID_LOOKUP[trade_partner_id],
-        season %in% c(2020, 2021, 2022) & trade_partner_id == "11" ~ "Logan",
-        season == 2023 & trade_partner_id == "11" ~ "Pat L",
-        TRUE ~ trade_partner_id
-      )
+      team_name = get_franchise_owner(franchise_id, season),
+      trade_partner_name = get_franchise_owner(trade_partner_id, season)
     ) %>%
+    ungroup() %>%
     select(
       season, date = timestamp,
       team_name, trade_partner = trade_partner_name,
