@@ -98,7 +98,7 @@ gt_theme_dynasty <- function(data, season_label = "Season Rank", ...) {
       playerprofiler = "PlyrPro",
       dynastypros = "DynPro"
     ) %>%
-    fmt_missing(columns = everything(), missing_text = "---") %>%
+    sub_missing(columns = everything(), missing_text = "---") %>%
     tab_style(
       style = list(
         cell_fill(color = PRIMARY_COLOR),
@@ -225,10 +225,10 @@ generate_h2h_table <- function(h2h_data, team) {
   h2h_data %>%
     filter(tm == team) %>%
     arrange(-wins, -avg_mrg) %>%
-    select(-tm, opp, wins, losses, wp = winperc, pf, pa, avg_mrg) %>%
+    select(opp, wins, losses, wp = winperc, pf, pa, avg_mrg) %>%
     gt() %>%
     tab_header(title = md("**All-Time Results (Head to Head)**")) %>%
-    fmt_number(columns = 4:6, decimals = 1) %>%
+    fmt_number(columns = c(pf, pa, avg_mrg), decimals = 1) %>%
     gt_theme_schedule()
 }
 
@@ -278,12 +278,14 @@ generate_schedule_table <- function(recap_data, team, season) {
 #' @param title Table title
 #' @return gt table object
 generate_notable_games_table <- function(data, title) {
+  decimals <- ifelse(grepl("Close", title), 2, 1)
+
   data %>%
     gt() %>%
     tab_header(title = md(title)) %>%
-    fmt_number(columns = 5:7, decimals = ifelse(grepl("Close", title), 2, 1)) %>%
-    cols_align(align = "center", columns = 1:2) %>%
-    cols_align(align = "center", columns = 5:7) %>%
+    fmt_number(columns = c(pf, pa, margin), decimals = decimals) %>%
+    cols_align(align = "center", columns = c(season, week)) %>%
+    cols_align(align = "center", columns = c(pf, pa, margin)) %>%
     gt_theme_schedule()
 }
 
