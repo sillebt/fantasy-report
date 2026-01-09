@@ -130,12 +130,20 @@ generate_schedules <- function(full_schedule) {
   message("Season schedules complete!")
 }
 
-#' Generate all power ranking tables
+#' Generate all power ranking tables (legacy method)
 #' @param full_schedule Full schedule data
 generate_power_rankings <- function(full_schedule) {
-  message("\n--- Generating Power Rankings ---")
+  message("\n--- Generating Legacy Power Rankings ---")
   generate_all_power_rankings(full_schedule)
-  message("Power rankings complete!")
+  message("Legacy power rankings complete!")
+}
+
+#' Generate new power rankings (All-Play, Z-Score, Quadrants)
+#' @param full_schedule Full schedule data
+generate_new_power_rankings <- function(full_schedule) {
+  message("\n--- Generating New Power Rankings ---")
+  generate_all_new_power_rankings(full_schedule)
+  message("New power rankings complete!")
 }
 
 #' Generate blowouts and close calls tables
@@ -234,6 +242,7 @@ generate_all_reports <- function() {
   generate_head_to_head(data$full_schedule)
   generate_schedules(data$full_schedule)
   generate_power_rankings(data$full_schedule)
+  generate_new_power_rankings(data$full_schedule)  # All-Play, Z-Score, Quadrants
   generate_notable_games(data$full_schedule)
   generate_trades(data$trades)
   generate_median_analysis(data$full_schedule)
@@ -272,6 +281,15 @@ generate_h2h_only <- function() {
   generate_head_to_head(full_schedule)
 }
 
+#' Generate only new power rankings (All-Play, Z-Score, Quadrants)
+generate_power_only <- function() {
+  ensure_output_dirs()
+  connections <- create_all_connections()
+  franchise_lookup <- get_franchise_lookup(fetch_all_franchises(connections))
+  full_schedule <- build_full_schedule(connections, franchise_lookup)
+  generate_new_power_rankings(full_schedule)
+}
+
 # -----------------------------------------------------------------------------
 # Interactive Usage Message
 # -----------------------------------------------------------------------------
@@ -281,4 +299,5 @@ message("Available functions:")
 message("  generate_all_reports()    - Generate all tables and charts")
 message("  generate_standings_only() - Generate only standings tables")
 message("  generate_h2h_only()       - Generate only head-to-head tables")
+message("  generate_power_only()     - Generate All-Play, Z-Score & Quadrant plots")
 message("\nRun generate_all_reports() to start.")

@@ -15,6 +15,8 @@ library(dplyr)
 library(scales)
 library(showtext)
 library(sysfonts)
+library(ggplot2)
+library(ggrepel)
 
 # Load configuration
 source("R/config.R")
@@ -500,4 +502,321 @@ generate_all_season_schedules <- function(full_schedule) {
       gtsave(gt_table, filename)
     }
   }
+}
+
+# -----------------------------------------------------------------------------
+# Table Generators: All-Play Rankings
+# -----------------------------------------------------------------------------
+
+#' Generate All-Play rankings table for a season
+#' @param all_play_data All-play rankings data
+#' @param season_year Season year
+#' @return gt table object
+generate_all_play_table <- function(all_play_data, season_year) {
+  setup_fonts()
+
+  title_text <- if (season_year == "All") {
+    "All-Time All-Play Rankings"
+  } else {
+    paste(season_year, "All-Play Rankings")
+  }
+
+  data_filtered <- all_play_data
+  if (season_year != "All") {
+    data_filtered <- data_filtered %>%
+      filter(season == season_year) %>%
+      select(-season)
+  }
+
+  data_filtered %>%
+    mutate(
+      rank = row_number(),
+      avg_score = round(avg_score, 1),
+      avg_rank = round(avg_rank, 1)
+    ) %>%
+    select(rank, team, ap_wins, ap_losses, ap_pct, avg_score, avg_rank) %>%
+    gt() %>%
+    tab_header(
+      title = md(paste0("**", title_text, "**")),
+      subtitle = "What if you played everyone every week?"
+    ) %>%
+    cols_label(
+      rank = "#",
+      team = "Team",
+      ap_wins = "AP Wins",
+      ap_losses = "AP Losses",
+      ap_pct = "AP Win%",
+      avg_score = "Avg PF",
+      avg_rank = "Avg Rank"
+    ) %>%
+    cols_align(align = "center", columns = c(rank, ap_wins, ap_losses, ap_pct, avg_score, avg_rank)) %>%
+    cols_align(align = "left", columns = team) %>%
+    gt_theme_schedule() %>%
+    tab_source_note(
+      md("**All-Play**: Record if you played every team each week")
+    )
+}
+
+#' Save all-play tables for all seasons
+#' @param full_schedule Full schedule data
+#' @param output_path Output directory
+save_all_play_tables <- function(full_schedule, output_path = OUTPUT_PATHS$history) {
+  source("R/data_transform.R")
+
+  for (season in SEASONS) {
+    all_play_data <- get_all_play_rankings(full_schedule, season)
+    gt_table <- generate_all_play_table(all_play_data, season)
+    gtsave(gt_table, paste0(output_path, "all_play_rankings_", season, ".png"))
+  }
+
+  # Combined all seasons
+  all_play_combined <- get_all_play_rankings(full_schedule, NULL)
+  gt_table <- generate_all_play_table(all_play_combined, "All")
+  gtsave(gt_table, paste0(output_path, "all_play_rankings_combined.png"))
+}
+
+# -----------------------------------------------------------------------------
+# Table Generators: Z-Score Rankings
+# -----------------------------------------------------------------------------
+
+#' Generate Z-Score rankings table for a season
+#' @param zscore_data Z-score rankings data
+#' @param season_year Season year
+#' @return gt table object
+generate_zscore_table <- function(zscore_data, season_year) {
+  setup_fonts()
+
+  title_text <- if (season_year == "All") {
+    "All-Time Z-Score Power Rankings"
+  } else {
+    paste(season_year, "Z-Score Power Rankings")
+  }
+
+  data_filtered <- zscore_data
+  if (season_year != "All") {
+    data_filtered <- data_filtered %>%
+      filter(season == season_year) %>%
+      select(-season)
+  }
+
+  data_filtered %>%
+    mutate(
+      rank = row_number(),
+      avg_pf = round(avg_pf, 1),
+      consistency = round(consistency, 1),
+      ap_pct = scales::percent(ap_pct, accuracy = 0.1),
+      actual_wp = scales::percent(actual_wp, accuracy = 0.1),
+      z_score = round(z_score, 2),
+      z_allplay = round(z_allplay, 2),
+      z_consist = round(z_consist, 2)
+    ) %>%
+    select(rank, team, power, avg_pf, ap_pct, actual_wp, z_score, z_allplay, z_consist) %>%
+    gt() %>%
+    tab_header(
+      title = md(paste0("**", title_text, "**")),
+      subtitle = "45% Scoring | 35% All-Play | 20% Consistency"
+    ) %>%
+    tab_spanner(label = "Performance", columns = c(avg_pf, ap_pct, actual_wp)) %>%
+    tab_spanner(label = "Z-Scores", columns = c(z_score, z_allplay, z_consist)) %>%
+    cols_label(
+      rank = "#",
+      team = "Team",
+      power = "Power",
+      avg_pf = "Avg PF",
+      ap_pct = "All-Play%",
+      actual_wp = "Actual W%",
+      z_score = "Scoring",
+      z_allplay = "All-Play",
+      z_consist = "Consist"
+    ) %>%
+    cols_align(align = "center", columns = -team) %>%
+    cols_align(align = "left", columns = team) %>%
+    tab_style(
+      style = cell_fill(color = "#e8f4e8"),
+      locations = cells_body(columns = power, rows = power >= 55)
+    ) %>%
+    tab_style(
+      style = cell_fill(color = "#f4e8e8"),
+      locations = cells_body(columns = power, rows = power < 45)
+    ) %>%
+    gt_theme_schedule() %>%
+    tab_source_note(
+      md("**Power**: 50 = league average | **Z-Score**: 0 = average, +1 = 1 std dev above")
+    )
+}
+
+#' Save z-score tables for all seasons
+#' @param full_schedule Full schedule data
+#' @param output_path Output directory
+save_zscore_tables <- function(full_schedule, output_path = OUTPUT_PATHS$history) {
+  source("R/data_transform.R")
+
+  for (season in SEASONS) {
+    zscore_data <- get_zscore_rankings(full_schedule, season)
+    gt_table <- generate_zscore_table(zscore_data, season)
+    gtsave(gt_table, paste0(output_path, "zscore_rankings_", season, ".png"))
+  }
+
+  # Combined all seasons
+  zscore_combined <- get_zscore_rankings(full_schedule, NULL)
+  gt_table <- generate_zscore_table(zscore_combined, "All")
+  gtsave(gt_table, paste0(output_path, "zscore_rankings_combined.png"))
+}
+
+# -----------------------------------------------------------------------------
+# Quadrant Plot: All-Play vs Z-Score Power
+# -----------------------------------------------------------------------------
+
+#' Generate quadrant plot showing All-Play Win% vs Z-Score Power Rating
+#'
+#' Creates a scatter plot with four quadrants:
+#'   - Top-Right: High scoring + high all-play (true elite)
+#'   - Top-Left: Low scoring + high all-play (lucky/efficient)
+#'   - Bottom-Right: High scoring + low all-play (unlucky)
+#'   - Bottom-Left: Low scoring + low all-play (rebuilding)
+#'
+#' @param full_schedule Full schedule data
+#' @param season_year Season to plot
+#' @param output_path Output directory
+#' @return ggplot object
+generate_power_quadrant_plot <- function(full_schedule, season_year, output_path = OUTPUT_PATHS$history) {
+  source("R/data_transform.R")
+
+  # Get quadrant data
+
+  quadrant_data <- get_power_quadrant_data(full_schedule, season_year)
+
+  # Calculate means for quadrant lines
+  mean_ap <- mean(quadrant_data$ap_win_pct)
+  mean_power <- mean(quadrant_data$power_rating)
+
+  # Assign quadrant labels
+  quadrant_data <- quadrant_data %>%
+    mutate(
+      quadrant = case_when(
+        ap_win_pct >= mean_ap & power_rating >= mean_power ~ "Elite",
+        ap_win_pct >= mean_ap & power_rating < mean_power ~ "Efficient",
+        ap_win_pct < mean_ap & power_rating >= mean_power ~ "Unlucky",
+        TRUE ~ "Rebuilding"
+      ),
+      quadrant = factor(quadrant, levels = c("Elite", "Efficient", "Unlucky", "Rebuilding"))
+    )
+
+  # Create the plot
+  p <- ggplot(quadrant_data, aes(x = ap_win_pct * 100, y = power_rating)) +
+    # Quadrant shading
+    annotate("rect",
+      xmin = mean_ap * 100, xmax = Inf, ymin = mean_power, ymax = Inf,
+      fill = "#d4edda", alpha = 0.3
+    ) +
+    annotate("rect",
+      xmin = -Inf, xmax = mean_ap * 100, ymin = mean_power, ymax = Inf,
+      fill = "#fff3cd", alpha = 0.3
+    ) +
+    annotate("rect",
+      xmin = mean_ap * 100, xmax = Inf, ymin = -Inf, ymax = mean_power,
+      fill = "#cce5ff", alpha = 0.3
+    ) +
+    annotate("rect",
+      xmin = -Inf, xmax = mean_ap * 100, ymin = -Inf, ymax = mean_power,
+      fill = "#f8d7da", alpha = 0.3
+    ) +
+    # Quadrant dividers
+    geom_vline(xintercept = mean_ap * 100, linetype = "dashed", color = "gray40", linewidth = 0.8) +
+    geom_hline(yintercept = mean_power, linetype = "dashed", color = "gray40", linewidth = 0.8) +
+    # Points
+    geom_point(aes(color = quadrant), size = 4, alpha = 0.8) +
+    # Labels
+    geom_text_repel(
+      aes(label = tm),
+      size = 3.5,
+      fontface = "bold",
+      box.padding = 0.4,
+      point.padding = 0.3,
+      segment.color = "gray50",
+      max.overlaps = 15
+    ) +
+    # Quadrant labels
+    annotate("text", x = max(quadrant_data$ap_win_pct * 100) - 5,
+             y = max(quadrant_data$power_rating) - 2,
+             label = "ELITE", fontface = "bold", color = "#155724", size = 4, alpha = 0.7) +
+    annotate("text", x = min(quadrant_data$ap_win_pct * 100) + 5,
+             y = max(quadrant_data$power_rating) - 2,
+             label = "EFFICIENT", fontface = "bold", color = "#856404", size = 4, alpha = 0.7) +
+    annotate("text", x = max(quadrant_data$ap_win_pct * 100) - 5,
+             y = min(quadrant_data$power_rating) + 2,
+             label = "UNLUCKY", fontface = "bold", color = "#004085", size = 4, alpha = 0.7) +
+    annotate("text", x = min(quadrant_data$ap_win_pct * 100) + 5,
+             y = min(quadrant_data$power_rating) + 2,
+             label = "REBUILDING", fontface = "bold", color = "#721c24", size = 4, alpha = 0.7) +
+    # Scales and theme
+    scale_color_manual(
+      values = c(
+        "Elite" = "#28a745",
+        "Efficient" = "#ffc107",
+        "Unlucky" = "#007bff",
+        "Rebuilding" = "#dc3545"
+      ),
+      guide = "none"
+    ) +
+    scale_x_continuous(
+      labels = function(x) paste0(x, "%"),
+      expand = expansion(mult = 0.1)
+    ) +
+    labs(
+      title = paste(season_year, "Power Quadrant Analysis"),
+      subtitle = "All-Play Win% (X) vs Z-Score Power Rating (Y)",
+      x = "All-Play Win %",
+      y = "Z-Score Power Rating",
+      caption = paste0(
+        "Quadrant lines at league averages: ",
+        round(mean_ap * 100, 1), "% AP Win / ",
+        round(mean_power, 1), " Power"
+      )
+    ) +
+    theme_minimal(base_size = 12) +
+    theme(
+      plot.title = element_text(face = "bold", size = 16, hjust = 0.5),
+      plot.subtitle = element_text(size = 11, hjust = 0.5, color = "gray40"),
+      plot.caption = element_text(size = 9, color = "gray50"),
+      panel.grid.minor = element_blank(),
+      panel.grid.major = element_line(color = "gray90"),
+      axis.title = element_text(face = "bold"),
+      plot.background = element_rect(fill = "white", color = NA),
+      panel.background = element_rect(fill = "white", color = NA)
+    )
+
+  # Save the plot
+  filename <- paste0(output_path, "power_quadrant_", season_year, ".png")
+  ggsave(filename, p, width = 10, height = 8, dpi = 150, bg = "white")
+
+  invisible(p)
+}
+
+#' Generate quadrant plots for all seasons
+#' @param full_schedule Full schedule data
+#' @param output_path Output directory
+save_all_quadrant_plots <- function(full_schedule, output_path = OUTPUT_PATHS$history) {
+  for (season in SEASONS) {
+    generate_power_quadrant_plot(full_schedule, season, output_path)
+  }
+}
+
+# -----------------------------------------------------------------------------
+# Batch Generation: All New Power Rankings
+# -----------------------------------------------------------------------------
+
+#' Generate all new power ranking outputs (All-Play, Z-Score, Quadrants)
+#' @param full_schedule Full schedule data
+generate_all_new_power_rankings <- function(full_schedule) {
+  message("\n--- Generating All-Play Rankings ---")
+  save_all_play_tables(full_schedule)
+
+  message("\n--- Generating Z-Score Rankings ---")
+  save_zscore_tables(full_schedule)
+
+  message("\n--- Generating Power Quadrant Plots ---")
+  save_all_quadrant_plots(full_schedule)
+
+  message("New power rankings complete!")
 }

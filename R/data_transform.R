@@ -250,6 +250,236 @@ calculate_power_rankings <- function(schedule, season_year = NULL) {
 }
 
 # -----------------------------------------------------------------------------
+# All-Play Record Rankings
+# -----------------------------------------------------------------------------
+
+#' Calculate all-play record for each team
+#'
+#' All-play record answers: "What would your record be if you played every
+#' team in the league every week?" This removes schedule luck entirely.
+#'
+#' @param schedule Full schedule data
+#' @param season_filter Optional season to filter (NULL for all seasons)
+#' @return Data frame with all-play wins, losses, and win percentage
+calculate_all_play_record <- function(schedule, season_filter = NULL) {
+  data <- schedule %>%
+    filter(season_type == "Regular")
+
+  if (!is.null(season_filter)) {
+    data <- data %>% filter(season == season_filter)
+  }
+
+  # For each team-week, count how many teams they would beat
+  # Get unique scores per team per week (avoid duplicates from schedule format)
+  weekly_scores <- data %>%
+    select(season, week, tm, tm_score) %>%
+    distinct()
+
+  # Calculate all-play for each team-week
+  all_play_weekly <- weekly_scores %>%
+    group_by(season, week) %>%
+    mutate(
+      n_teams = n(),
+      # Count teams with lower scores (wins) and higher scores (losses)
+      ap_wins = sum(tm_score > weekly_scores$tm_score[
+        weekly_scores$season == first(season) &
+        weekly_scores$week == first(week) &
+        weekly_scores$tm != tm
+      ]),
+      ap_losses = n_teams - 1 - ap_wins
+    ) %>%
+    ungroup()
+
+  # Recalculate properly using rank
+  all_play_weekly <- weekly_scores %>%
+    group_by(season, week) %>%
+    mutate(
+      n_teams = n(),
+      weekly_rank = rank(-tm_score, ties.method = "average"),
+      ap_wins = n_teams - weekly_rank,
+      ap_losses = weekly_rank - 1
+    ) %>%
+    ungroup()
+
+  # Aggregate to season totals
+  all_play_season <- all_play_weekly %>%
+    group_by(season, tm) %>%
+    summarize(
+      weeks_played = n(),
+      total_ap_wins = sum(ap_wins),
+      total_ap_losses = sum(ap_losses),
+      avg_weekly_rank = mean(weekly_rank),
+      avg_score = mean(tm_score),
+      .groups = "drop"
+    ) %>%
+    mutate(
+      ap_games = total_ap_wins + total_ap_losses,
+      ap_win_pct = total_ap_wins / ap_games,
+      ap_record = paste0(round(total_ap_wins), "-", round(total_ap_losses))
+    ) %>%
+    arrange(season, -ap_win_pct)
+
+  all_play_season
+}
+
+#' Generate all-play rankings table data
+#' @param schedule Full schedule data
+#' @param season_filter Optional season filter
+#' @return Data frame formatted for display
+get_all_play_rankings <- function(schedule, season_filter = NULL) {
+  all_play <- calculate_all_play_record(schedule, season_filter)
+
+  all_play %>%
+    mutate(
+      ap_win_pct_fmt = scales::percent(ap_win_pct, accuracy = 0.1),
+      rank = row_number()
+    ) %>%
+    select(
+      season, rank, team = tm,
+      ap_wins = total_ap_wins,
+      ap_losses = total_ap_losses,
+      ap_pct = ap_win_pct_fmt,
+      avg_score,
+      avg_rank = avg_weekly_rank
+    )
+}
+
+# -----------------------------------------------------------------------------
+# Z-Score Composite Power Rankings
+# -----------------------------------------------------------------------------
+
+#' Calculate Z-Score based power rankings
+#'
+#' Uses standardized scores (z-scores) to create comparable metrics across
+#' different scales. Combines scoring, all-play record, and consistency.
+#'
+#' Weights:
+#'   - 45% Average Score (roster strength)
+#'   - 35% All-Play Win % (schedule-adjusted performance)
+#'   - 20% Consistency (lower std dev = better)
+#'
+#' @param schedule Full schedule data
+#' @param season_filter Optional season to filter (NULL for all seasons)
+#' @return Data frame with z-score components and final power rating
+calculate_zscore_rankings <- function(schedule, season_filter = NULL) {
+  data <- schedule %>%
+    filter(season_type == "Regular")
+
+  if (!is.null(season_filter)) {
+    data <- data %>% filter(season == season_filter)
+  }
+
+  # Get unique scores per team per week
+  weekly_scores <- data %>%
+    select(season, week, tm, tm_score) %>%
+    distinct()
+
+  # Calculate base stats
+  base_stats <- weekly_scores %>%
+    group_by(season, tm) %>%
+    summarize(
+      games = n(),
+      avg_score = mean(tm_score),
+      std_score = sd(tm_score),
+      max_score = max(tm_score),
+      min_score = min(tm_score),
+      .groups = "drop"
+    )
+
+  # Get all-play data
+  all_play <- calculate_all_play_record(schedule, season_filter) %>%
+    select(season, tm, ap_win_pct)
+
+  # Get actual wins
+  actual_wins <- data %>%
+    select(season, tm, result) %>%
+    distinct() %>%
+    group_by(season, tm) %>%
+    summarize(
+      actual_wins = sum(result),
+      actual_games = n(),
+      actual_win_pct = actual_wins / actual_games,
+      .groups = "drop"
+    )
+
+  # Combine all metrics
+  combined <- base_stats %>%
+    left_join(all_play, by = c("season", "tm")) %>%
+    left_join(actual_wins, by = c("season", "tm"))
+
+  # Calculate z-scores within each season
+  zscore_rankings <- combined %>%
+    group_by(season) %>%
+    mutate(
+      # Z-scores (standardized to mean=0, sd=1)
+      z_scoring = as.numeric(scale(avg_score)),
+      z_all_play = as.numeric(scale(ap_win_pct)),
+      z_consistency = as.numeric(scale(-std_score)),  # Negative because lower std = better
+
+      # Weighted composite: 45% scoring, 35% all-play, 20% consistency
+      z_power = (0.45 * z_scoring) + (0.35 * z_all_play) + (0.20 * z_consistency),
+
+      # Rescale to 0-100 scale (mean=50, sd=15)
+      power_rating = round(50 + (z_power * 15), 1),
+
+      # Also provide 1.0-centered version for comparison
+      power_normalized = round(1 + (z_power * 0.15), 4)
+    ) %>%
+    ungroup() %>%
+    arrange(season, -power_rating)
+
+  zscore_rankings
+}
+
+#' Generate z-score rankings table data
+#' @param schedule Full schedule data
+#' @param season_filter Optional season filter
+#' @return Data frame formatted for display
+get_zscore_rankings <- function(schedule, season_filter = NULL) {
+  zscore <- calculate_zscore_rankings(schedule, season_filter)
+
+  zscore %>%
+    group_by(season) %>%
+    mutate(rank = row_number()) %>%
+    ungroup() %>%
+    select(
+      season, rank, team = tm,
+      avg_pf = avg_score,
+      consistency = std_score,
+      ap_pct = ap_win_pct,
+      actual_wp = actual_win_pct,
+      z_score = z_scoring,
+      z_allplay = z_all_play,
+      z_consist = z_consistency,
+      power = power_rating
+    )
+}
+
+#' Get combined data for quadrant plot
+#' @param schedule Full schedule data
+#' @param season_filter Season to filter
+#' @return Data frame with all-play and z-score data for plotting
+get_power_quadrant_data <- function(schedule, season_filter) {
+  all_play <- calculate_all_play_record(schedule, season_filter)
+  zscore <- calculate_zscore_rankings(schedule, season_filter)
+
+  # Combine for plotting
+  quadrant_data <- all_play %>%
+    select(season, tm, ap_win_pct, avg_score) %>%
+    left_join(
+      zscore %>% select(season, tm, z_power, power_rating, actual_win_pct, std_score),
+      by = c("season", "tm")
+    ) %>%
+    mutate(
+      # Normalize both to similar scales for plotting
+      ap_pct_scaled = ap_win_pct * 100,
+      power_scaled = power_rating
+    )
+
+  quadrant_data
+}
+
+# -----------------------------------------------------------------------------
 # Blowouts and Close Calls
 # -----------------------------------------------------------------------------
 
