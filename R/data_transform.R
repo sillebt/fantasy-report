@@ -113,26 +113,57 @@ build_full_schedule <- function(connections, franchise_lookup) {
   full_schedule <- full_schedule %>%
     distinct(season, week, tm, opp, .keep_all = TRUE)
 
-  # Add season type classification using dynamic week cutoffs
+  # Add basic season type classification
   full_schedule <- full_schedule %>%
     rowwise() %>%
     mutate(
       regular_week_cutoff = get_regular_season_weeks(season),
       playoff_week_start = get_playoff_week_cutoff(season),
+      is_postseason = week >= playoff_week_start,
+      tm_made_playoffs = is_playoff_team(tm, season),
+      opp_made_playoffs = is_playoff_team(opp, season)
+    ) %>%
+    ungroup()
+
+  # For postseason games, identify consolation vs championship path
+  # A game is consolation if BOTH teams have already lost that postseason
+  # Step 1: Find each team's first loss week in each postseason
+  first_loss <- full_schedule %>%
+    filter(is_postseason, result == 0) %>%
+    group_by(season, tm) %>%
+    summarize(first_loss_week = min(week), .groups = "drop")
+
+  # Step 2: Join first loss info for both teams in each game
+  full_schedule <- full_schedule %>%
+    left_join(first_loss, by = c("season", "tm")) %>%
+    rename(tm_first_loss = first_loss_week) %>%
+    left_join(first_loss, by = c("season", "opp" = "tm")) %>%
+    rename(opp_first_loss = first_loss_week)
+
+  # Step 3: Classify season type
+  # Championship path: at least one team hasn't lost yet (first_loss >= current week or NA)
+  # Consolation: BOTH teams lost before this week
+  full_schedule <- full_schedule %>%
+    mutate(
       season_type = case_when(
-        # Regular season: week <= cutoff for that season (13 for 2020, 14 for 2021+)
-        week <= regular_week_cutoff ~ "Regular",
+        # Regular season
+        !is_postseason ~ "Regular",
 
-        # Playoffs: post regular season AND team made playoffs
-        week >= playoff_week_start & is_playoff_team(tm, season) ~ "Playoffs",
+        # Non-playoff teams in postseason weeks = Consolation
+        !tm_made_playoffs | !opp_made_playoffs ~ "Consolation",
 
-        # Consolation (everyone else in late weeks)
+        # Championship path: at least one team still in contention
+        # (hasn't lost yet - first_loss is NA or >= current week)
+        is.na(tm_first_loss) | tm_first_loss >= week |
+          is.na(opp_first_loss) | opp_first_loss >= week ~ "Playoffs",
+
+        # Consolation: both teams already eliminated (lost before this week)
         TRUE ~ "Consolation"
       )
     ) %>%
-    ungroup() %>%
-    select(-regular_week_cutoff, -playoff_week_start) %>%
-    # Filter out consolation games for most analyses
+    select(-regular_week_cutoff, -playoff_week_start, -is_postseason,
+           -tm_made_playoffs, -opp_made_playoffs, -tm_first_loss, -opp_first_loss) %>%
+    # Filter out consolation games
     filter(season_type != "Consolation")
 
   full_schedule
