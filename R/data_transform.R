@@ -105,6 +105,14 @@ build_full_schedule <- function(connections, franchise_lookup) {
     arrange(season, week, tm) %>%
     mutate(win_loss = ifelse(result == 1, "W", "L"))
 
+  # Remove rows with NA scores (unplayed games/bracket placeholders)
+  full_schedule <- full_schedule %>%
+    filter(!is.na(tm_score), !is.na(opp_score))
+
+  # Remove duplicate games (same season/week/tm/opp combination)
+  full_schedule <- full_schedule %>%
+    distinct(season, week, tm, opp, .keep_all = TRUE)
+
   # Add season type classification using dynamic week cutoffs
   full_schedule <- full_schedule %>%
     rowwise() %>%
@@ -159,10 +167,10 @@ calculate_standings <- function(schedule, season_filter = NULL,
   data %>%
     group_by(tm) %>%
     summarize(
-      wins   = sum(result),
+      wins   = sum(result, na.rm = TRUE),
       games  = n(),
-      pf     = round(mean(tm_score), 1),
-      pa     = round(mean(opp_score), 1),
+      pf     = round(mean(tm_score, na.rm = TRUE), 1),
+      pa     = round(mean(opp_score, na.rm = TRUE), 1),
       .groups = "drop"
     ) %>%
     mutate(
@@ -185,6 +193,7 @@ calculate_standings <- function(schedule, season_filter = NULL,
 calculate_head_to_head <- function(schedule, season_type_filter = "Regular") {
   schedule %>%
     filter(season_type == season_type_filter) %>%
+    filter(!is.na(tm_score), !is.na(opp_score)) %>%  # Remove unplayed games
     mutate(
       tm_score  = as.numeric(tm_score),
       opp_score = as.numeric(opp_score),
@@ -225,11 +234,11 @@ calculate_power_rankings <- function(schedule, season_year = NULL) {
   power_rankings <- data %>%
     group_by(tm, season) %>%
     summarize(
-      wins   = sum(result),
+      wins   = sum(result, na.rm = TRUE),
       games  = n(),
-      pf     = mean(tm_score),
-      max_pf = max(tm_score),
-      min_pf = min(tm_score),
+      pf     = mean(tm_score, na.rm = TRUE),
+      max_pf = max(tm_score, na.rm = TRUE),
+      min_pf = min(tm_score, na.rm = TRUE),
       .groups = "drop"
     ) %>%
     mutate(
@@ -241,8 +250,8 @@ calculate_power_rankings <- function(schedule, season_year = NULL) {
       power_rank   = round((adj_winp + adj_pf + adj_variance) / 10, 2)
     )
 
-  # Normalize by league average
-  league_average <- mean(power_rankings$power_rank)
+  # Normalize by league average (use na.rm to handle any remaining NAs)
+  league_average <- mean(power_rankings$power_rank, na.rm = TRUE)
 
   power_rankings %>%
     mutate(power = round(power_rank / league_average, 4)) %>%
@@ -264,7 +273,8 @@ calculate_power_rankings <- function(schedule, season_year = NULL) {
 #' @return Data frame with all-play wins, losses, and win percentage
 calculate_all_play_record <- function(schedule, season_filter = NULL) {
   data <- schedule %>%
-    filter(season_type == "Regular")
+    filter(season_type == "Regular") %>%
+    filter(!is.na(tm_score))  # Remove any rows with NA scores
 
   if (!is.null(season_filter)) {
     data <- data %>% filter(season == season_filter)
@@ -276,22 +286,7 @@ calculate_all_play_record <- function(schedule, season_filter = NULL) {
     select(season, week, tm, tm_score) %>%
     distinct()
 
-  # Calculate all-play for each team-week
-  all_play_weekly <- weekly_scores %>%
-    group_by(season, week) %>%
-    mutate(
-      n_teams = n(),
-      # Count teams with lower scores (wins) and higher scores (losses)
-      ap_wins = sum(tm_score > weekly_scores$tm_score[
-        weekly_scores$season == first(season) &
-        weekly_scores$week == first(week) &
-        weekly_scores$tm != tm
-      ]),
-      ap_losses = n_teams - 1 - ap_wins
-    ) %>%
-    ungroup()
-
-  # Recalculate properly using rank
+  # Calculate all-play using rank (more efficient and handles ties)
   all_play_weekly <- weekly_scores %>%
     group_by(season, week) %>%
     mutate(
@@ -307,10 +302,10 @@ calculate_all_play_record <- function(schedule, season_filter = NULL) {
     group_by(season, tm) %>%
     summarize(
       weeks_played = n(),
-      total_ap_wins = sum(ap_wins),
-      total_ap_losses = sum(ap_losses),
-      avg_weekly_rank = mean(weekly_rank),
-      avg_score = mean(tm_score),
+      total_ap_wins = sum(ap_wins, na.rm = TRUE),
+      total_ap_losses = sum(ap_losses, na.rm = TRUE),
+      avg_weekly_rank = mean(weekly_rank, na.rm = TRUE),
+      avg_score = mean(tm_score, na.rm = TRUE),
       .groups = "drop"
     ) %>%
     mutate(
@@ -364,7 +359,8 @@ get_all_play_rankings <- function(schedule, season_filter = NULL) {
 #' @return Data frame with z-score components and final power rating
 calculate_zscore_rankings <- function(schedule, season_filter = NULL) {
   data <- schedule %>%
-    filter(season_type == "Regular")
+    filter(season_type == "Regular") %>%
+    filter(!is.na(tm_score))  # Remove any rows with NA scores
 
   if (!is.null(season_filter)) {
     data <- data %>% filter(season == season_filter)
@@ -380,10 +376,10 @@ calculate_zscore_rankings <- function(schedule, season_filter = NULL) {
     group_by(season, tm) %>%
     summarize(
       games = n(),
-      avg_score = mean(tm_score),
-      std_score = sd(tm_score),
-      max_score = max(tm_score),
-      min_score = min(tm_score),
+      avg_score = mean(tm_score, na.rm = TRUE),
+      std_score = sd(tm_score, na.rm = TRUE),
+      max_score = max(tm_score, na.rm = TRUE),
+      min_score = min(tm_score, na.rm = TRUE),
       .groups = "drop"
     )
 
@@ -397,7 +393,7 @@ calculate_zscore_rankings <- function(schedule, season_filter = NULL) {
     distinct() %>%
     group_by(season, tm) %>%
     summarize(
-      actual_wins = sum(result),
+      actual_wins = sum(result, na.rm = TRUE),
       actual_games = n(),
       actual_win_pct = actual_wins / actual_games,
       .groups = "drop"
@@ -528,8 +524,9 @@ get_close_calls <- function(schedule, n = 20) {
 add_median_analysis <- function(schedule) {
   schedule %>%
     filter(season_type == "Regular") %>%
+    filter(!is.na(tm_score)) %>%  # Remove unplayed games
     group_by(season, week) %>%
-    mutate(median_score = median(tm_score)) %>%
+    mutate(median_score = median(tm_score, na.rm = TRUE)) %>%
     ungroup() %>%
     mutate(
       median_result = ifelse(tm_score > median_score, 1, 0),
@@ -553,8 +550,8 @@ calculate_median_standings <- function(schedule, season_filter = NULL) {
     group_by(tm) %>%
     summarize(
       games    = n(),
-      wins     = sum(result),
-      pot_wins = sum(result) + sum(median_result),
+      wins     = sum(result, na.rm = TRUE),
+      pot_wins = sum(result, na.rm = TRUE) + sum(median_result, na.rm = TRUE),
       .groups  = "drop"
     ) %>%
     mutate(
