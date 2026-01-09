@@ -51,3 +51,6 @@ rsconnect/
 .Rdata
 .DS_Store
 .quarto
+
+# Archived old scripts (kept locally for reference)
+archive/
