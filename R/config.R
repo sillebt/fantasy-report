@@ -12,12 +12,12 @@
 #' Sleeper league IDs by season
 #' Each season has a unique league ID on the Sleeper platform
 LEAGUE_IDS <- list(
-
   "2020" = "591530379404427264",
   "2021" = "650064757319118848",
   "2022" = "785068521058115584",
   "2023" = "917507729030352896",
-  "2024" = "1048425511736713216"
+  "2024" = "1048425511736713216",
+  "2025" = "1180377149789876224"
 )
 
 #' Draft IDs corresponding to each league
@@ -30,19 +30,19 @@ DRAFT_IDS <- list(
 
 #' Active seasons for analysis
 #' Add new seasons to this vector to include them automatically
-SEASONS <- 2020:2023
+SEASONS <- 2020:2025
 
 #' Get the most recent season
 CURRENT_SEASON <- max(SEASONS)
 
 #' Number of weeks per season (2020 had 17, 2021+ have 18)
 WEEKS_BY_SEASON <- list(
-
   "2020" = 1:17,
   "2021" = 1:18,
   "2022" = 1:18,
   "2023" = 1:18,
-  "2024" = 1:18
+  "2024" = 1:18,
+  "2025" = 1:18
 )
 
 # -----------------------------------------------------------------------------
@@ -66,13 +66,14 @@ USERNAME_LOOKUP <- c(
   "slobonmynoblin" = "Logan",
   "asmontalvo"     = "Montel",
   "cpmadden1"      = "Conor",
-  "patrickliou"    = "Pat Liou"
+  "patrickliou"    = "Pat Liou",
+  "stankmasterP"   = "Peter"
 )
 
 #' Map franchise IDs to display names (for current season)
 FRANCHISE_ID_LOOKUP <- c(
   "1"  = "Tom",
-  "2"  = "Montel",
+  "2"  = "Peter",
   "3"  = "Tommy",
   "4"  = "JP",
   "5"  = "Patrick",
@@ -89,6 +90,10 @@ FRANCHISE_ID_LOOKUP <- c(
 #' Used to track owner changes for historical accuracy
 #' Format: franchise_id -> list of (seasons, owner_name)
 FRANCHISE_OWNERSHIP_HISTORY <- list(
+  "2" = list(
+    list(seasons = 2020:2024, owner = "Montel"),
+    list(seasons = 2025:2099, owner = "Peter")  # 2025 onwards
+  ),
   "11" = list(
     list(seasons = 2020:2022, owner = "Logan"),
     list(seasons = 2023:2099, owner = "Pat L")  # 2023 onwards
@@ -103,7 +108,9 @@ PLAYOFF_TEAMS <- list(
   "2020" = c("Hosta", "Patrick", "Tom", "Zac", "Tommy", "JP"),
   "2021" = c("Hosta", "Patrick", "Tom", "Zac", "Naad", "Randal"),
   "2022" = c("Hosta", "Patrick", "Tom", "Zac", "Tommy", "Naad"),
-  "2023" = c("Zac", "Aviel", "Tommy", "JP", "Tom", "Naad")
+  "2023" = c("Zac", "Aviel", "Tommy", "JP", "Tom", "Naad"),
+  "2024" = c("Naad", "Tommy", "JP", "Zac", "Tom", "Montel"),
+  "2025" = c("JP", "Tom", "Pat Liou", "Zac", "Naad", "Patrick")
 )
 
 #' Champions by season (for trophy indicator)
@@ -111,7 +118,9 @@ CHAMPIONS <- list(
   "2020" = "Hosta",
   "2021" = "Naad",
   "2022" = "Tommy",
-  "2023" = "Tom"
+  "2023" = "Tom",
+  "2024" = "JP",
+  "2025" = "JP"
 )
 
 # -----------------------------------------------------------------------------
@@ -148,6 +157,20 @@ SEASON_STANDINGS_CONFIG <- list(
     subtitle = "**Tom Avoids Buffalo Futility**",
     filename = "2023_standings.png",
     champion = "Tom"
+  ),
+  list(
+    season   = 2024,
+    title    = "**2024 Standings**",
+    subtitle = "**JP's Redemption Arc**",
+    filename = "2024_standings.png",
+    champion = "JP"
+  ),
+  list(
+    season   = 2025,
+    title    = "**2025 Standings**",
+    subtitle = "**JP Goes Back-to-Back**",
+    filename = "2025_standings.png",
+    champion = "JP"
   )
 )
 

@@ -294,8 +294,10 @@ fetch_all_trades <- function(connections, parallel = TRUE) {
   }
 
   # Remove empty results and combine
+  # Use bind_rows instead of rbind to handle mismatched columns between seasons
+  # (e.g., 2021 is missing waiver_priority column)
   trades_list <- Filter(function(x) nrow(x) > 0, trades_list)
-  do.call(rbind, trades_list)
+  dplyr::bind_rows(trades_list)
 }
 
 # -----------------------------------------------------------------------------
