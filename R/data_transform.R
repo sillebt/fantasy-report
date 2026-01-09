@@ -105,25 +105,65 @@ build_full_schedule <- function(connections, franchise_lookup) {
     arrange(season, week, tm) %>%
     mutate(win_loss = ifelse(result == 1, "W", "L"))
 
-  # Add season type classification
+  # Remove rows with NA scores (unplayed games/bracket placeholders)
+  full_schedule <- full_schedule %>%
+    filter(!is.na(tm_score), !is.na(opp_score))
+
+  # Remove duplicate games (same season/week/tm/opp combination)
+  full_schedule <- full_schedule %>%
+    distinct(season, week, tm, opp, .keep_all = TRUE)
+
+  # Add basic season type classification
+  full_schedule <- full_schedule %>%
+    rowwise() %>%
+    mutate(
+      regular_week_cutoff = get_regular_season_weeks(season),
+      playoff_week_start = get_playoff_week_cutoff(season),
+      is_postseason = week >= playoff_week_start,
+      tm_made_playoffs = is_playoff_team(tm, season),
+      opp_made_playoffs = is_playoff_team(opp, season)
+    ) %>%
+    ungroup()
+
+  # For postseason games, identify consolation vs championship path
+  # A game is consolation if BOTH teams have already lost that postseason
+  # Step 1: Find each team's first loss week in each postseason
+  first_loss <- full_schedule %>%
+    filter(is_postseason, result == 0) %>%
+    group_by(season, tm) %>%
+    summarize(first_loss_week = min(week), .groups = "drop")
+
+  # Step 2: Join first loss info for both teams in each game
+  full_schedule <- full_schedule %>%
+    left_join(first_loss, by = c("season", "tm")) %>%
+    rename(tm_first_loss = first_loss_week) %>%
+    left_join(first_loss, by = c("season", "opp" = "tm")) %>%
+    rename(opp_first_loss = first_loss_week)
+
+  # Step 3: Classify season type
+  # Championship path: at least one team hasn't lost yet (first_loss >= current week or NA)
+  # Consolation: BOTH teams lost before this week
   full_schedule <- full_schedule %>%
     mutate(
       season_type = case_when(
         # Regular season
-        (season == 2020 & week <= 13) |
-        (season %in% 2021:2023 & week <= 14) ~ "Regular",
+        !is_postseason ~ "Regular",
 
-        # Playoffs (check if team is playoff team)
-        (season == 2020 & week >= 14 & tm %in% PLAYOFF_TEAMS[["2020"]]) |
-        (season == 2021 & week >= 15 & tm %in% PLAYOFF_TEAMS[["2021"]]) |
-        (season == 2022 & week >= 15 & tm %in% PLAYOFF_TEAMS[["2022"]]) |
-        (season == 2023 & week >= 15 & tm %in% PLAYOFF_TEAMS[["2023"]]) ~ "Playoffs",
+        # Non-playoff teams in postseason weeks = Consolation
+        !tm_made_playoffs | !opp_made_playoffs ~ "Consolation",
 
-        # Consolation (everyone else in late weeks)
+        # Championship path: at least one team still in contention
+        # (hasn't lost yet - first_loss is NA or >= current week)
+        is.na(tm_first_loss) | tm_first_loss >= week |
+          is.na(opp_first_loss) | opp_first_loss >= week ~ "Playoffs",
+
+        # Consolation: both teams already eliminated (lost before this week)
         TRUE ~ "Consolation"
       )
     ) %>%
-    # Filter out consolation games for most analyses
+    select(-regular_week_cutoff, -playoff_week_start, -is_postseason,
+           -tm_made_playoffs, -opp_made_playoffs, -tm_first_loss, -opp_first_loss) %>%
+    # Filter out consolation games
     filter(season_type != "Consolation")
 
   full_schedule
@@ -158,10 +198,10 @@ calculate_standings <- function(schedule, season_filter = NULL,
   data %>%
     group_by(tm) %>%
     summarize(
-      wins   = sum(result),
+      wins   = sum(result, na.rm = TRUE),
       games  = n(),
-      pf     = round(mean(tm_score), 1),
-      pa     = round(mean(opp_score), 1),
+      pf     = round(mean(tm_score, na.rm = TRUE), 1),
+      pa     = round(mean(opp_score, na.rm = TRUE), 1),
       .groups = "drop"
     ) %>%
     mutate(
@@ -184,6 +224,7 @@ calculate_standings <- function(schedule, season_filter = NULL,
 calculate_head_to_head <- function(schedule, season_type_filter = "Regular") {
   schedule %>%
     filter(season_type == season_type_filter) %>%
+    filter(!is.na(tm_score), !is.na(opp_score)) %>%  # Remove unplayed games
     mutate(
       tm_score  = as.numeric(tm_score),
       opp_score = as.numeric(opp_score),
@@ -224,11 +265,11 @@ calculate_power_rankings <- function(schedule, season_year = NULL) {
   power_rankings <- data %>%
     group_by(tm, season) %>%
     summarize(
-      wins   = sum(result),
+      wins   = sum(result, na.rm = TRUE),
       games  = n(),
-      pf     = mean(tm_score),
-      max_pf = max(tm_score),
-      min_pf = min(tm_score),
+      pf     = mean(tm_score, na.rm = TRUE),
+      max_pf = max(tm_score, na.rm = TRUE),
+      min_pf = min(tm_score, na.rm = TRUE),
       .groups = "drop"
     ) %>%
     mutate(
@@ -240,8 +281,8 @@ calculate_power_rankings <- function(schedule, season_year = NULL) {
       power_rank   = round((adj_winp + adj_pf + adj_variance) / 10, 2)
     )
 
-  # Normalize by league average
-  league_average <- mean(power_rankings$power_rank)
+  # Normalize by league average (use na.rm to handle any remaining NAs)
+  league_average <- mean(power_rankings$power_rank, na.rm = TRUE)
 
   power_rankings %>%
     mutate(power = round(power_rank / league_average, 4)) %>%
@@ -263,7 +304,8 @@ calculate_power_rankings <- function(schedule, season_year = NULL) {
 #' @return Data frame with all-play wins, losses, and win percentage
 calculate_all_play_record <- function(schedule, season_filter = NULL) {
   data <- schedule %>%
-    filter(season_type == "Regular")
+    filter(season_type == "Regular") %>%
+    filter(!is.na(tm_score))  # Remove any rows with NA scores
 
   if (!is.null(season_filter)) {
     data <- data %>% filter(season == season_filter)
@@ -275,22 +317,7 @@ calculate_all_play_record <- function(schedule, season_filter = NULL) {
     select(season, week, tm, tm_score) %>%
     distinct()
 
-  # Calculate all-play for each team-week
-  all_play_weekly <- weekly_scores %>%
-    group_by(season, week) %>%
-    mutate(
-      n_teams = n(),
-      # Count teams with lower scores (wins) and higher scores (losses)
-      ap_wins = sum(tm_score > weekly_scores$tm_score[
-        weekly_scores$season == first(season) &
-        weekly_scores$week == first(week) &
-        weekly_scores$tm != tm
-      ]),
-      ap_losses = n_teams - 1 - ap_wins
-    ) %>%
-    ungroup()
-
-  # Recalculate properly using rank
+  # Calculate all-play using rank (more efficient and handles ties)
   all_play_weekly <- weekly_scores %>%
     group_by(season, week) %>%
     mutate(
@@ -306,10 +333,10 @@ calculate_all_play_record <- function(schedule, season_filter = NULL) {
     group_by(season, tm) %>%
     summarize(
       weeks_played = n(),
-      total_ap_wins = sum(ap_wins),
-      total_ap_losses = sum(ap_losses),
-      avg_weekly_rank = mean(weekly_rank),
-      avg_score = mean(tm_score),
+      total_ap_wins = sum(ap_wins, na.rm = TRUE),
+      total_ap_losses = sum(ap_losses, na.rm = TRUE),
+      avg_weekly_rank = mean(weekly_rank, na.rm = TRUE),
+      avg_score = mean(tm_score, na.rm = TRUE),
       .groups = "drop"
     ) %>%
     mutate(
@@ -363,7 +390,8 @@ get_all_play_rankings <- function(schedule, season_filter = NULL) {
 #' @return Data frame with z-score components and final power rating
 calculate_zscore_rankings <- function(schedule, season_filter = NULL) {
   data <- schedule %>%
-    filter(season_type == "Regular")
+    filter(season_type == "Regular") %>%
+    filter(!is.na(tm_score))  # Remove any rows with NA scores
 
   if (!is.null(season_filter)) {
     data <- data %>% filter(season == season_filter)
@@ -379,10 +407,10 @@ calculate_zscore_rankings <- function(schedule, season_filter = NULL) {
     group_by(season, tm) %>%
     summarize(
       games = n(),
-      avg_score = mean(tm_score),
-      std_score = sd(tm_score),
-      max_score = max(tm_score),
-      min_score = min(tm_score),
+      avg_score = mean(tm_score, na.rm = TRUE),
+      std_score = sd(tm_score, na.rm = TRUE),
+      max_score = max(tm_score, na.rm = TRUE),
+      min_score = min(tm_score, na.rm = TRUE),
       .groups = "drop"
     )
 
@@ -396,7 +424,7 @@ calculate_zscore_rankings <- function(schedule, season_filter = NULL) {
     distinct() %>%
     group_by(season, tm) %>%
     summarize(
-      actual_wins = sum(result),
+      actual_wins = sum(result, na.rm = TRUE),
       actual_games = n(),
       actual_win_pct = actual_wins / actual_games,
       .groups = "drop"
@@ -527,8 +555,9 @@ get_close_calls <- function(schedule, n = 20) {
 add_median_analysis <- function(schedule) {
   schedule %>%
     filter(season_type == "Regular") %>%
+    filter(!is.na(tm_score)) %>%  # Remove unplayed games
     group_by(season, week) %>%
-    mutate(median_score = median(tm_score)) %>%
+    mutate(median_score = median(tm_score, na.rm = TRUE)) %>%
     ungroup() %>%
     mutate(
       median_result = ifelse(tm_score > median_score, 1, 0),
@@ -552,8 +581,8 @@ calculate_median_standings <- function(schedule, season_filter = NULL) {
     group_by(tm) %>%
     summarize(
       games    = n(),
-      wins     = sum(result),
-      pot_wins = sum(result) + sum(median_result),
+      wins     = sum(result, na.rm = TRUE),
+      pot_wins = sum(result, na.rm = TRUE) + sum(median_result, na.rm = TRUE),
       .groups  = "drop"
     ) %>%
     mutate(
@@ -598,28 +627,18 @@ process_trades <- function(trades) {
     left_join(traded_for, by = c("season", "timestamp", "team_1" = "team_2")) %>%
     mutate(timestamp = format(timestamp, "%m/%d/%y"))
 
-  # Apply team name lookups
+  # Apply team name lookups using dynamic ownership history
   trades_combined %>%
     mutate(
       franchise_id = as.character(team_1),
       trade_partner_id = as.character(trade_partner)
     ) %>%
+    rowwise() %>%
     mutate(
-      team_name = case_when(
-        franchise_id %in% names(FRANCHISE_ID_LOOKUP) ~
-          FRANCHISE_ID_LOOKUP[franchise_id],
-        season %in% c(2020, 2021, 2022) & franchise_id == "11" ~ "Logan",
-        season == 2023 & franchise_id == "11" ~ "Pat L",
-        TRUE ~ franchise_id
-      ),
-      trade_partner_name = case_when(
-        trade_partner_id %in% names(FRANCHISE_ID_LOOKUP) ~
-          FRANCHISE_ID_LOOKUP[trade_partner_id],
-        season %in% c(2020, 2021, 2022) & trade_partner_id == "11" ~ "Logan",
-        season == 2023 & trade_partner_id == "11" ~ "Pat L",
-        TRUE ~ trade_partner_id
-      )
+      team_name = get_franchise_owner(franchise_id, season),
+      trade_partner_name = get_franchise_owner(trade_partner_id, season)
     ) %>%
+    ungroup() %>%
     select(
       season, date = timestamp,
       team_name, trade_partner = trade_partner_name,

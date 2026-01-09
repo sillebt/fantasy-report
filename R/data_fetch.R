@@ -14,9 +14,35 @@ library(sleeperapi)
 library(dplyr)
 library(purrr)
 library(tidyr)
+library(furrr)       # For parallel API calls
+library(future)      # For parallel processing backend
 
 # Load configuration
 source("R/config.R")
+
+# -----------------------------------------------------------------------------
+# Parallel Processing Configuration
+# -----------------------------------------------------------------------------
+
+#' Setup parallel processing for API calls
+#' @param workers Integer. Number of parallel workers (default: auto-detect)
+#' @param verbose Logical. Print setup message (default: TRUE)
+setup_parallel <- function(workers = NULL, verbose = TRUE) {
+  if (is.null(workers)) {
+    workers <- max(1, parallel::detectCores() - 1)
+  }
+  plan(multisession, workers = workers)
+  if (verbose) {
+    message(sprintf("Parallel processing enabled with %d workers", workers))
+  }
+  invisible(workers)
+}
+
+#' Disable parallel processing (revert to sequential)
+disable_parallel <- function() {
+  plan(sequential)
+  message("Parallel processing disabled, using sequential mode")
+}
 
 # -----------------------------------------------------------------------------
 # Connection Management
@@ -27,9 +53,11 @@ source("R/config.R")
 #' @return ff_connect object for API calls
 create_connection <- function(season) {
   league_id <- get_league_id(season)
+  # Keep league_id as character to avoid floating point precision loss
+  # on large integer IDs (18+ digits exceed R's numeric precision)
   ff_connect(
     platform  = "sleeper",
-    league_id = as.numeric(league_id),
+    league_id = league_id,
     season    = season
   )
 }
@@ -68,12 +96,20 @@ fetch_starters_single <- function(conn, season) {
 
 #' Fetch starters for all seasons
 #' @param connections Named list of ff_connect objects
+#' @param parallel Logical. Use parallel processing (default: TRUE)
 #' @return Combined data frame of all starters
-fetch_all_starters <- function(connections) {
-  starters_list <- purrr::imap(connections, function(conn, season) {
-    message(sprintf("Fetching starters for %s...", season))
-    fetch_starters_single(conn, as.integer(season))
-  })
+fetch_all_starters <- function(connections, parallel = TRUE) {
+  if (parallel && inherits(plan(), "multisession")) {
+    message("Fetching starters in parallel...")
+    starters_list <- furrr::future_imap(connections, function(conn, season) {
+      fetch_starters_single(conn, as.integer(season))
+    }, .progress = TRUE)
+  } else {
+    starters_list <- purrr::imap(connections, function(conn, season) {
+      message(sprintf("Fetching starters for %s...", season))
+      fetch_starters_single(conn, as.integer(season))
+    })
+  }
 
   do.call(rbind, starters_list)
 }
@@ -94,12 +130,20 @@ fetch_franchises_single <- function(conn, season) {
 
 #' Fetch franchises for all seasons
 #' @param connections Named list of ff_connect objects
+#' @param parallel Logical. Use parallel processing (default: TRUE)
 #' @return Combined data frame of all franchises
-fetch_all_franchises <- function(connections) {
-  franchises_list <- purrr::imap(connections, function(conn, season) {
-    message(sprintf("Fetching franchises for %s...", season))
-    fetch_franchises_single(conn, as.integer(season))
-  })
+fetch_all_franchises <- function(connections, parallel = TRUE) {
+  if (parallel && inherits(plan(), "multisession")) {
+    message("Fetching franchises in parallel...")
+    franchises_list <- furrr::future_imap(connections, function(conn, season) {
+      fetch_franchises_single(conn, as.integer(season))
+    }, .progress = TRUE)
+  } else {
+    franchises_list <- purrr::imap(connections, function(conn, season) {
+      message(sprintf("Fetching franchises for %s...", season))
+      fetch_franchises_single(conn, as.integer(season))
+    })
+  }
 
   do.call(rbind, franchises_list)
 }
@@ -130,19 +174,28 @@ fetch_scoring_single <- function(conn, season) {
   scoring <- ff_scoringhistory(conn, season = season)
 
   # Filter out defensive positions and select key columns
+  # Include pos for VOR calculations in trade analysis
   scoring %>%
     filter(!pos %in% c("LB", "DB", "DL")) %>%
-    select(season, week, sleeper_id, player_name, points, team)
+    select(season, week, sleeper_id, player_name, pos, points, team)
 }
 
 #' Fetch scoring history for all seasons
 #' @param connections Named list of ff_connect objects
+#' @param parallel Logical. Use parallel processing (default: TRUE)
 #' @return Combined data frame of all scoring
-fetch_all_scoring <- function(connections) {
-  scoring_list <- purrr::imap(connections, function(conn, season) {
-    message(sprintf("Fetching scoring history for %s...", season))
-    fetch_scoring_single(conn, as.integer(season))
-  })
+fetch_all_scoring <- function(connections, parallel = TRUE) {
+  if (parallel && inherits(plan(), "multisession")) {
+    message("Fetching scoring history in parallel...")
+    scoring_list <- furrr::future_imap(connections, function(conn, season) {
+      fetch_scoring_single(conn, as.integer(season))
+    }, .progress = TRUE)
+  } else {
+    scoring_list <- purrr::imap(connections, function(conn, season) {
+      message(sprintf("Fetching scoring history for %s...", season))
+      fetch_scoring_single(conn, as.integer(season))
+    })
+  }
 
   do.call(rbind, scoring_list)
 }
@@ -163,12 +216,20 @@ fetch_schedule_single <- function(conn, season) {
 
 #' Fetch schedules for all seasons
 #' @param connections Named list of ff_connect objects
+#' @param parallel Logical. Use parallel processing (default: TRUE)
 #' @return Combined data frame of all schedules
-fetch_all_schedules <- function(connections) {
-  schedules_list <- purrr::imap(connections, function(conn, season) {
-    message(sprintf("Fetching schedule for %s...", season))
-    fetch_schedule_single(conn, as.integer(season))
-  })
+fetch_all_schedules <- function(connections, parallel = TRUE) {
+  if (parallel && inherits(plan(), "multisession")) {
+    message("Fetching schedules in parallel...")
+    schedules_list <- furrr::future_imap(connections, function(conn, season) {
+      fetch_schedule_single(conn, as.integer(season))
+    }, .progress = TRUE)
+  } else {
+    schedules_list <- purrr::imap(connections, function(conn, season) {
+      message(sprintf("Fetching schedule for %s...", season))
+      fetch_schedule_single(conn, as.integer(season))
+    })
+  }
 
   do.call(rbind, schedules_list)
 }
@@ -218,16 +279,26 @@ fetch_trades_single <- function(conn, season) {
 
 #' Fetch trades for all seasons
 #' @param connections Named list of ff_connect objects
+#' @param parallel Logical. Use parallel processing (default: TRUE)
 #' @return Combined data frame of all trades
-fetch_all_trades <- function(connections) {
-  trades_list <- purrr::imap(connections, function(conn, season) {
-    message(sprintf("Fetching trades for %s...", season))
-    fetch_trades_single(conn, as.integer(season))
-  })
+fetch_all_trades <- function(connections, parallel = TRUE) {
+  if (parallel && inherits(plan(), "multisession")) {
+    message("Fetching trades in parallel...")
+    trades_list <- furrr::future_imap(connections, function(conn, season) {
+      fetch_trades_single(conn, as.integer(season))
+    }, .progress = TRUE)
+  } else {
+    trades_list <- purrr::imap(connections, function(conn, season) {
+      message(sprintf("Fetching trades for %s...", season))
+      fetch_trades_single(conn, as.integer(season))
+    })
+  }
 
   # Remove empty results and combine
+  # Use bind_rows instead of rbind to handle mismatched columns between seasons
+  # (e.g., 2021 is missing waiver_priority column)
   trades_list <- Filter(function(x) nrow(x) > 0, trades_list)
-  do.call(rbind, trades_list)
+  dplyr::bind_rows(trades_list)
 }
 
 # -----------------------------------------------------------------------------
@@ -286,18 +357,29 @@ fetch_player_ids <- function() {
 
 #' Fetch all core data for the fantasy report
 #' @param seasons Integer vector. Seasons to fetch (default: SEASONS from config)
+#' @param parallel Logical. Use parallel processing for API calls (default: TRUE)
 #' @return Named list containing all fetched data
-fetch_all_data <- function(seasons = SEASONS) {
+fetch_all_data <- function(seasons = SEASONS, parallel = TRUE) {
   message("Creating connections...")
   connections <- create_all_connections(seasons)
 
+  # Setup parallel processing if requested
+  if (parallel) {
+    setup_parallel(verbose = TRUE)
+  }
+
   message("\n=== Fetching Core Data ===\n")
 
-  starters   <- fetch_all_starters(connections)
-  franchises <- fetch_all_franchises(connections)
-  scoring    <- fetch_all_scoring(connections)
-  schedules  <- fetch_all_schedules(connections)
-  trades     <- fetch_all_trades(connections)
+  starters   <- fetch_all_starters(connections, parallel = parallel)
+  franchises <- fetch_all_franchises(connections, parallel = parallel)
+  scoring    <- fetch_all_scoring(connections, parallel = parallel)
+  schedules  <- fetch_all_schedules(connections, parallel = parallel)
+  trades     <- fetch_all_trades(connections, parallel = parallel)
+
+  # Disable parallel processing after fetching
+  if (parallel) {
+    disable_parallel()
+  }
 
   # Create franchise lookup
   franchise_lookup <- get_franchise_lookup(franchises)
